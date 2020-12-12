@@ -38,6 +38,11 @@ return [
             'api_key' => env('SENDGRID_API_KEY'),
         ],
 
+        'mailjet' => [
+            'key'    => env('MAILJET_KEY'),
+            'secret' => env('MAILJET_SECRET'),
+        ],
+
         'smtp' => [
             'transport'  => 'smtp',
             'host'       => env('MAIL_HOST', 'smtp.mailgun.org'),
