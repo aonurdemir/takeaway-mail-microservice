@@ -12,7 +12,7 @@ class MailFacade
 
     public function __construct()
     {
-        $this->mailService = new SendGridMailServiceImp();
+        $this->mailService = MailServiceMailjetImp::ofVersion('v3.1');
     }
 
     /**

@@ -8,20 +8,25 @@ use App\Models\Mail;
 use Mailjet\Client;
 use Mailjet\Resources;
 
-class MailjetMailServiceImp implements MailService
+class MailServiceMailjetImp implements MailService
 {
     /**
      * @var \Mailjet\Client
      */
     private Client $mailjetClient;
 
-    public function __construct()
+    public static function ofVersion(string $version)
+    {
+        return new static($version);
+    }
+
+    private function __construct($version)
     {
         $this->mailjetClient = $mj = new Client(
             config('mail.mailers.mailjet.key'),
             config('mail.mailers.mailjet.secret'),
             true,
-            ['version' => 'v3.1']
+            ['version' => $version]
         );
     }
 
