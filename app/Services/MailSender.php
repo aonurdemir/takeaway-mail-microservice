@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\Mail;
 
-class MailFacade
+class MailSender
 {
     private MailService $mailService;
 
