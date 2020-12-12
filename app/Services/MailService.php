@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\Mail;
 
-interface IMailService
+interface MailService
 {
     public function send(Mail $mail);
 

@@ -6,10 +6,10 @@ namespace App\Services;
 
 use App\Exceptions\TypeException;
 use App\Models\Mail;
-use SendGrid\Mail\Mail as SendGridMail;
 use SendGrid;
+use SendGrid\Mail\Mail as SendGridMail;
 
-class SendGridMailServiceImp implements IMailService
+class SendGridMailServiceImp implements MailService
 {
     /**
      * @var SendGrid

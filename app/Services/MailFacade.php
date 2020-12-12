@@ -8,7 +8,7 @@ use App\Models\Mail;
 
 class MailFacade
 {
-    private IMailService $mailService;
+    private MailService $mailService;
 
     public function __construct()
     {
