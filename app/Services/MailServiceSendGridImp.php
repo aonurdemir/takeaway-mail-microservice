@@ -9,7 +9,7 @@ use App\Models\Mail;
 use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
 
-class SendGridMailServiceImp implements MailService
+class MailServiceSendGridImp implements MailService
 {
     /**
      * @var SendGrid
@@ -18,7 +18,7 @@ class SendGridMailServiceImp implements MailService
 
     public function __construct()
     {
-        $this->sendGrid = new \SendGrid(config('mail.mailers.sendgrid.api_key'));
+        $this->sendGrid = new SendGrid(config('mail.mailers.sendgrid.api_key'));
     }
 
     /**
