@@ -35,13 +35,13 @@ class SendMailJob implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param \App\Services\MailSender $mailManager
+     * @param \App\Services\MailSender $mailSender
      *
      * @return void
      * @throws \App\Exceptions\TypeException
      */
-    public function handle(MailSender $mailManager)
+    public function handle(MailSender $mailSender)
     {
-        $mailManager->send($this->mail);
+        $mailSender->send($this->mail);
     }
 }
