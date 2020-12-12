@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string from
+ * @property string to
+ * @property string subject
+ * @property string content
+ * @property string state
+ */
 class Mail extends Model
 {
     use HasFactory;
@@ -37,4 +44,11 @@ class Mail extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function markAsSent()
+    {
+        $this->state = Mail::STATE_SENT;
+        $this->save();
+    }
+
 }

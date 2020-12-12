@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Mail;
+use App\Services\MailFacade;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,18 +29,19 @@ class SendMailJob implements ShouldQueue
      */
     public function __construct(Mail $mail)
     {
-        //
         $this->mail = $mail;
     }
 
     /**
      * Execute the job.
      *
+     * @param \App\Services\MailFacade $mailManager
+     *
      * @return void
+     * @throws \App\Exceptions\TypeException
      */
-    public function handle()
+    public function handle(MailFacade $mailManager)
     {
-        $this->mail->state = Mail::STATE_SENT;
-        $this->mail->save();
+        $mailManager->send($this->mail);
     }
 }
