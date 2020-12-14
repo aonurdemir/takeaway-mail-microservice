@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\NoAvailableThirdPartyMailService;
 use App\Models\MailJob;
 use App\Services\MailSender;
 use Illuminate\Bus\Queueable;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendMailJob implements ShouldQueue
 {
@@ -36,7 +38,17 @@ class SendMailJob implements ShouldQueue
      */
     public function handle()
     {
-        $mailSender = new MailSender($this->mailJob);
-        $mailSender->send();
+        try {
+            $mailSender = new MailSender($this->mailJob);
+            $mailSender->send();
+        } catch (NoAvailableThirdPartyMailService $e) {
+            Log::alert($e->getMessage());
+            $this->release(5); //todo give reasonable time here
+        } catch (\Exception $e) {
+            Log::alert($e->getMessage());
+            //if there is unknown error,
+            //better to make jobs wait a little more until the bug will be resolved
+            $this->release(60);
+        }
     }
 }
