@@ -4,12 +4,15 @@
 namespace App\Services;
 
 
+use App\Exceptions\NoAvailableThirdPartyMailService;
 use App\Models\MailJob;
+use Exception;
 
 class MailSender
 {
-    private MailService $mailService;
-    private MailJob     $mailJob;
+    private MailJob      $mailJob;
+    private ?MailService $mailService;
+    private array        $mailServiceQueue;
 
     /**
      * MailSender constructor.
@@ -21,17 +24,55 @@ class MailSender
     public function __construct(MailJob $mailJob)
     {
         $this->mailJob = $mailJob;
-        $this->mailService = MailServiceFactory::create(MailServiceFactory::MAILJET);
+        $this->mailServiceQueue = MailServiceFactory::createAllServices();
     }
 
+    /**
+     * @throws \App\Exceptions\NoAvailableThirdPartyMailService
+     */
     public function send()
     {
-        $this->mailService->send($this->mailJob);
+        $this->setMailServiceFromQueue();
+        while ($this->isMailServiceAvailable()) {
+            try {
+                $this->doSend();
+                $this->markMailJobAsSent();
 
-        //todo after successful send, mark state
-        $this->mailJob->markAsSent();
+                return;
+            } catch (Exception $e) {
+                $this->setMailServiceFromQueue();
+            }
+        }
+        $this->markMailJobAsFailed();
+
+        throw new NoAvailableThirdPartyMailService();
+    }
+
+    private function setMailServiceFromQueue()
+    {
+        $this->mailService = array_shift($this->mailServiceQueue);
+    }
+
+    private function doSend()
+    {
+        $this->mailService->send($this->mailJob);
+    }
+
+    private function isMailServiceAvailable(): bool
+    {
+        return $this->mailService != null;
+    }
+
+    private function markMailJobAsSent()
+    {
         $this->mailJob->setSenderThirdPartyProviderName($this->mailService->getThirdPartyProviderName());
+        $this->mailJob->markAsSent();
         $this->mailJob->save();
     }
 
+    private function markMailJobAsFailed()
+    {
+        $this->mailJob->markAsFailed();
+        $this->mailJob->save();
+    }
 }
