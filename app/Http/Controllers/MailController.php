@@ -3,12 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendMailJob;
-use App\Models\Mail;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Models\MailJob;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
 
 class MailController extends Controller
 {
@@ -21,13 +17,13 @@ class MailController extends Controller
      */
     public function store(Request $request)
     {
-        $mail = new Mail(
+        $mail = new MailJob(
             [
                 'from'    => $request->input('from'),
                 'to'      => $request->input('to'),
                 'subject' => $request->input('subject'),
                 'content' => $request->input('content'),
-                'state'   => Mail::STATE_CREATED,
+                'state'   => MailJob::STATE_CREATED,
             ]
         );
         $mail->save();

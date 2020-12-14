@@ -13,11 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string state
  * @property string sender_third_party_provider_name
  */
-class Mail extends Model
+class MailJob extends Model
 {
     use HasFactory;
 
-    protected $table = 'mails';
+    protected $table = 'mail_jobs';
 
     public const STATE_CREATED    = 'created';
     public const STATE_PROCESSING = 'processing';
@@ -48,7 +48,7 @@ class Mail extends Model
 
     public function markAsSent()
     {
-        $this->state = Mail::STATE_SENT;
+        $this->state = MailJob::STATE_SENT;
         $this->save();
     }
 

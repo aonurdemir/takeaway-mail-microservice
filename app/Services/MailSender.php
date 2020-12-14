@@ -4,7 +4,7 @@
 namespace App\Services;
 
 
-use App\Models\Mail;
+use App\Models\MailJob;
 
 class MailSender
 {
@@ -16,11 +16,11 @@ class MailSender
     }
 
     /**
-     * @param \App\Models\Mail $mail
+     * @param \App\Models\MailJob $mail
      *
      * @throws \App\Exceptions\TypeException
      */
-    public function send(Mail $mail)
+    public function send(MailJob $mail)
     {
         $this->mailService->send($mail);
 

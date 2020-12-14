@@ -4,7 +4,7 @@
 namespace App\Services;
 
 
-use App\Models\Mail;
+use App\Models\MailJob;
 use Mailjet\Client;
 use Mailjet\Resources;
 
@@ -31,10 +31,10 @@ class MailServiceMailjetImp implements MailService
     }
 
     /**
-     * @param \App\Models\Mail $mail
+     * @param \App\Models\MailJob $mail
      *
      */
-    public function send(Mail $mail)
+    public function send(MailJob $mail)
     {
         $body = $this->prepareMailjetMailBody($mail);
         $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
@@ -44,11 +44,11 @@ class MailServiceMailjetImp implements MailService
     }
 
     /**
-     * @param \App\Models\Mail $mail
+     * @param \App\Models\MailJob $mail
      *
      * @return array
      */
-    private function prepareMailjetMailBody(Mail $mail)
+    private function prepareMailjetMailBody(MailJob $mail)
     {
         return [
             'Messages' => [

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Mail;
+use App\Models\MailJob;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MailFactory extends Factory
@@ -12,7 +12,7 @@ class MailFactory extends Factory
      *
      * @var string
      */
-    protected $model = Mail::class;
+    protected $model = MailJob::class;
 
     /**
      * Define the model's default state.

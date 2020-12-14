@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Mail;
+use App\Models\MailJob;
 use App\Services\MailSender;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,16 +18,16 @@ class SendMailJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @var \App\Models\Mail
+     * @var \App\Models\MailJob
      */
     private $mail;
 
     /**
      * Create a new job instance.
      *
-     * @param \App\Models\Mail $mail
+     * @param \App\Models\MailJob $mail
      */
-    public function __construct(Mail $mail)
+    public function __construct(MailJob $mail)
     {
         $this->mail = $mail;
     }

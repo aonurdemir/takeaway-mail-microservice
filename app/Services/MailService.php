@@ -4,11 +4,11 @@
 namespace App\Services;
 
 
-use App\Models\Mail;
+use App\Models\MailJob;
 
 interface MailService
 {
-    public function send(Mail $mail);
+    public function send(MailJob $mail);
 
     public function getThirdPartyProviderName();
 }

@@ -5,7 +5,7 @@ namespace App\Services;
 
 
 use App\Exceptions\TypeException;
-use App\Models\Mail;
+use App\Models\MailJob;
 use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
 
@@ -22,11 +22,11 @@ class MailServiceSendGridImp implements MailService
     }
 
     /**
-     * @param \App\Models\Mail $mail
+     * @param \App\Models\MailJob $mail
      *
      * @throws \App\Exceptions\TypeException
      */
-    public function send(Mail $mail)
+    public function send(MailJob $mail)
     {
         $email = $this->prepareSendGridMail($mail);
         try {
@@ -41,12 +41,12 @@ class MailServiceSendGridImp implements MailService
     }
 
     /**
-     * @param \App\Models\Mail $mail
+     * @param \App\Models\MailJob $mail
      *
      * @return \SendGrid\Mail\Mail
      * @throws \App\Exceptions\TypeException
      */
-    private function prepareSendGridMail(Mail $mail)
+    private function prepareSendGridMail(MailJob $mail)
     {
         $email = new SendGridMail();
         try {
