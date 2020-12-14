@@ -11,10 +11,17 @@ class MailSender
     private MailService $mailService;
     private MailJob     $mailJob;
 
+    /**
+     * MailSender constructor.
+     *
+     * @param \App\Models\MailJob $mailJob
+     *
+     * @throws \App\Exceptions\UndefinedMailService
+     */
     public function __construct(MailJob $mailJob)
     {
         $this->mailJob = $mailJob;
-        $this->mailService = MailServiceMailjetImp::ofVersion('v3.1');
+        $this->mailService = MailServiceFactory::create(MailServiceFactory::MAILJET);
     }
 
     public function send()

@@ -17,10 +17,7 @@ class SendMailJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    /**
-     * @var \App\Models\MailJob
-     */
-    private $mailJob;
+    private MailJob $mailJob;
 
     /**
      * Create a new job instance.
@@ -35,13 +32,11 @@ class SendMailJob implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param \App\Services\MailSender $mailSender
-     *
      * @return void
-     * @throws \App\Exceptions\TypeException
      */
-    public function handle(MailSender $mailSender)
+    public function handle()
     {
-        $mailSender->send($this->mailJob);
+        $mailSender = new MailSender($this->mailJob);
+        $mailSender->send();
     }
 }
