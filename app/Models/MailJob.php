@@ -22,6 +22,7 @@ class MailJob extends Model
     public const STATE_CREATED    = 'created';
     public const STATE_PROCESSING = 'processing';
     public const STATE_SENT       = 'sent';
+    public const STATE_FAILED     = 'failed';
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +55,11 @@ class MailJob extends Model
     public function setSenderThirdPartyProviderName($name)
     {
         $this->sender_third_party_provider_name = $name;
+    }
+
+    public function markAsFailed()
+    {
+        $this->state = MailJob::STATE_FAILED;
     }
 
 }
