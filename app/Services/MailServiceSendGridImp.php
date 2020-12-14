@@ -34,15 +34,11 @@ class MailServiceSendGridImp implements MailService
     public function send(MailJob $mailJob)
     {
         $email = $this->prepareSendGridMail($mailJob);
-        try {
-            $response = $this->sendGrid->send($email);
-            var_dump($response->statusCode());
-            var_dump($response->headers());
-            var_dump($response->body());
-            //todo return response with a service response object
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-        }
+
+        $response = $this->sendGrid->send($email);
+        var_dump($response->statusCode());
+        var_dump($response->headers());
+        var_dump($response->body());
     }
 
     /**
