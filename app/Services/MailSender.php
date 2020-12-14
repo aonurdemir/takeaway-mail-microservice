@@ -9,25 +9,22 @@ use App\Models\MailJob;
 class MailSender
 {
     private MailService $mailService;
+    private MailJob     $mailJob;
 
-    public function __construct()
+    public function __construct(MailJob $mailJob)
     {
+        $this->mailJob = $mailJob;
         $this->mailService = MailServiceMailjetImp::ofVersion('v3.1');
     }
 
-    /**
-     * @param \App\Models\MailJob $mail
-     *
-     * @throws \App\Exceptions\TypeException
-     */
-    public function send(MailJob $mail)
+    public function send()
     {
-        $this->mailService->send($mail);
+        $this->mailService->send($this->mailJob);
 
         //todo after successful send, mark state
-        $mail->markAsSent();
-        $mail->setSenderThirdPartyProviderName($this->mailService->getThirdPartyProviderName());
-        $mail->save();
+        $this->mailJob->markAsSent();
+        $this->mailJob->setSenderThirdPartyProviderName($this->mailService->getThirdPartyProviderName());
+        $this->mailJob->save();
     }
 
 }

@@ -8,7 +8,7 @@ use App\Models\MailJob;
 
 interface MailService
 {
-    public function send(MailJob $mail);
+    public function send(MailJob $mailJob);
 
     public function getThirdPartyProviderName();
 }

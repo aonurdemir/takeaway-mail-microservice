@@ -20,16 +20,16 @@ class SendMailJob implements ShouldQueue
     /**
      * @var \App\Models\MailJob
      */
-    private $mail;
+    private $mailJob;
 
     /**
      * Create a new job instance.
      *
-     * @param \App\Models\MailJob $mail
+     * @param \App\Models\MailJob $mailJob
      */
-    public function __construct(MailJob $mail)
+    public function __construct(MailJob $mailJob)
     {
-        $this->mail = $mail;
+        $this->mailJob = $mailJob;
     }
 
     /**
@@ -42,6 +42,6 @@ class SendMailJob implements ShouldQueue
      */
     public function handle(MailSender $mailSender)
     {
-        $mailSender->send($this->mail);
+        $mailSender->send($this->mailJob);
     }
 }

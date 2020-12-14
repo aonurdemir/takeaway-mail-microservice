@@ -31,12 +31,12 @@ class MailServiceMailjetImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mail
+     * @param \App\Models\MailJob $mailJob
      *
      */
-    public function send(MailJob $mail)
+    public function send(MailJob $mailJob)
     {
-        $body = $this->prepareMailjetMailBody($mail);
+        $body = $this->prepareMailjetMailBody($mailJob);
         $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
 
         var_dump($response->success());
@@ -44,28 +44,28 @@ class MailServiceMailjetImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mail
+     * @param \App\Models\MailJob $mailJob
      *
      * @return array
      */
-    private function prepareMailjetMailBody(MailJob $mail)
+    private function prepareMailjetMailBody(MailJob $mailJob)
     {
         return [
             'Messages' => [
                 [
                     'From'     => [
-                        'Email' => $mail->from,
+                        'Email' => $mailJob->from,
                         'Name'  => "Abdullah Onur",
                     ],
                     'To'       => [
                         [
-                            'Email' => $mail->to,
+                            'Email' => $mailJob->to,
                             'Name'  => "Abdullah Onur",
                         ],
                     ],
-                    'Subject'  => $mail->subject,
+                    'Subject'  => $mailJob->subject,
                     //'TextPart' => "My first Mailjet email",
-                    'HTMLPart' => $mail->content,
+                    'HTMLPart' => $mailJob->content,
                 ],
             ],
         ];

@@ -17,7 +17,7 @@ class MailController extends Controller
      */
     public function store(Request $request)
     {
-        $mail = new MailJob(
+        $mailJob = new MailJob(
             [
                 'from'    => $request->input('from'),
                 'to'      => $request->input('to'),
@@ -26,8 +26,8 @@ class MailController extends Controller
                 'state'   => MailJob::STATE_CREATED,
             ]
         );
-        $mail->save();
-        SendMailJob::dispatch($mail);
+        $mailJob->save();
+        SendMailJob::dispatch($mailJob);
 
         return response()->json(['message' => 'ok'], 202);
     }

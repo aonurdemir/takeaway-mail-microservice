@@ -22,13 +22,13 @@ class MailServiceSendGridImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mail
+     * @param \App\Models\MailJob $mailJob
      *
      * @throws \App\Exceptions\TypeException
      */
-    public function send(MailJob $mail)
+    public function send(MailJob $mailJob)
     {
-        $email = $this->prepareSendGridMail($mail);
+        $email = $this->prepareSendGridMail($mailJob);
         try {
             $response = $this->sendGrid->send($email);
             var_dump($response->statusCode());
@@ -41,19 +41,19 @@ class MailServiceSendGridImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mail
+     * @param \App\Models\MailJob $mailJob
      *
      * @return \SendGrid\Mail\Mail
      * @throws \App\Exceptions\TypeException
      */
-    private function prepareSendGridMail(MailJob $mail)
+    private function prepareSendGridMail(MailJob $mailJob)
     {
         $email = new SendGridMail();
         try {
-            $email->setFrom($mail->from);
-            $email->setSubject($mail->subject);
-            $email->addTo($mail->to);
-            $email->addContent("text/html", $mail->content);
+            $email->setFrom($mailJob->from);
+            $email->setSubject($mailJob->subject);
+            $email->addTo($mailJob->to);
+            $email->addContent("text/html", $mailJob->content);
         } catch (SendGrid\Mail\TypeException $e) {
             throw new TypeException($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
