@@ -60,4 +60,9 @@ class MailServiceSendGridImp implements MailService
 
         return $email;
     }
+
+    public function getThirdPartyProviderName()
+    {
+        return 'sendgrid';
+    }
 }

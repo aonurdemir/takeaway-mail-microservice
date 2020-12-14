@@ -70,4 +70,9 @@ class MailServiceMailjetImp implements MailService
             ],
         ];
     }
+
+    public function getThirdPartyProviderName()
+    {
+        return 'mailjet';
+    }
 }

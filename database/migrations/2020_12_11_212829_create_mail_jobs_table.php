@@ -17,11 +17,13 @@ class CreateMailsTable extends Migration
             'mails',
             function (Blueprint $table) {
                 $table->id();
-                $table->text('from');
-                $table->text('to');
-                $table->text('subject');
-                $table->text('content');
-                $table->text('state');
+                $table->string('from');
+                $table->string('to');
+                $table->string('subject')->nullable();
+                $table->text('content')->nullable();
+                $table->string('state');
+                $table->string('sender_third_party_provider_name')->nullable();
+
                 $table->timestamps();
             }
         );

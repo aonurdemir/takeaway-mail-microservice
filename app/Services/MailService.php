@@ -10,4 +10,5 @@ interface MailService
 {
     public function send(Mail $mail);
 
+    public function getThirdPartyProviderName();
 }

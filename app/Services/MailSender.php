@@ -26,6 +26,7 @@ class MailSender
 
         //todo after successful send, mark state
         $mail->markAsSent();
+        $mail->setSenderThirdPartyProviderName($this->mailService->getThirdPartyProviderName());
         $mail->save();
     }
 

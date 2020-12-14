@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string subject
  * @property string content
  * @property string state
+ * @property string sender_third_party_provider_name
  */
 class Mail extends Model
 {
@@ -49,6 +50,11 @@ class Mail extends Model
     {
         $this->state = Mail::STATE_SENT;
         $this->save();
+    }
+
+    public function setSenderThirdPartyProviderName($name)
+    {
+        $this->sender_third_party_provider_name = $name;
     }
 
 }
