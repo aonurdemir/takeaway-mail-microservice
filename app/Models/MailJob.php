@@ -49,7 +49,6 @@ class MailJob extends Model
     public function markAsSent()
     {
         $this->state = MailJob::STATE_SENT;
-        $this->save();
     }
 
     public function setSenderThirdPartyProviderName($name)
