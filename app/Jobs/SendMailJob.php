@@ -39,16 +39,33 @@ class SendMailJob implements ShouldQueue
     public function handle()
     {
         try {
-            $mailSender = new MailSender($this->mailJob);
-            $mailSender->send();
+            $this->sendMail();
         } catch (NoAvailableThirdPartyMailService $e) {
-            Log::alert($e->getMessage());
-            $this->release(5); //todo give reasonable time here
+            $this->logErrorAndReleaseJob($e);
         } catch (\Exception $e) {
-            Log::alert($e->getMessage());
-            //if there is unknown error,
-            //better to make jobs wait a little more until the bug will be resolved
-            $this->release(60);
+            $this->logAlertAndReleaseJob($e);
         }
+    }
+
+    /**
+     * @throws \App\Exceptions\NoAvailableThirdPartyMailService
+     * @throws \App\Exceptions\UndefinedMailService
+     */
+    private function sendMail()
+    {
+        $mailSender = new MailSender($this->mailJob);
+        $mailSender->send();
+    }
+
+    private function logErrorAndReleaseJob(NoAvailableThirdPartyMailService $e)
+    {
+        Log::error($e->getMessage());
+        $this->release(5);
+    }
+
+    private function logAlertAndReleaseJob(\Exception $e)
+    {
+        Log::alert($e->getMessage());
+        $this->release(30);
     }
 }

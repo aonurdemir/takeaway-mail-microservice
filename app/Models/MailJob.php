@@ -47,7 +47,7 @@ class MailJob extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function markAsSent()
+    public function setAsSent()
     {
         $this->state = MailJob::STATE_SENT;
     }
@@ -57,7 +57,7 @@ class MailJob extends Model
         $this->sender_third_party_provider_name = $name;
     }
 
-    public function markAsFailed()
+    public function setAsFailed()
     {
         $this->state = MailJob::STATE_FAILED;
     }
