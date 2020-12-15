@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Exceptions\NoAvailableThirdPartyMailService;
 use App\Models\MailJob;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class MailSender
 {
@@ -40,6 +41,7 @@ class MailSender
 
                 return;
             } catch (Exception $e) {
+                Log::debug($e->getMessage());
                 $this->setMailServiceFromQueue();
             }
         }
