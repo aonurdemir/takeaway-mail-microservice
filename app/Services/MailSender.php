@@ -41,7 +41,7 @@ class MailSender
 
                 return;
             } catch (Exception $e) {
-                Log::debug($e->getMessage());
+                Log::error($e->getMessage());
                 $this->setMailServiceFromQueue();
             }
         }
