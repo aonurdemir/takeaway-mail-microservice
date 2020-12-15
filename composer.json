@@ -15,7 +15,8 @@
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "mailjet/mailjet-apiv3-php": "^1.5",
-        "sendgrid/sendgrid": "^7.9"
+        "sendgrid/sendgrid": "^7.9",
+        "ext-redis": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
