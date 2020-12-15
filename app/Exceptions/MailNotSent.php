@@ -4,11 +4,11 @@
 namespace App\Exceptions;
 
 
-class UnsentMail extends \Exception
+class MailNotSent extends \Exception
 {
 
     /**
-     * UnsentMail constructor.
+     * MailNotSent constructor.
      */
     public function __construct()
     {
