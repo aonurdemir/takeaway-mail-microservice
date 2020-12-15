@@ -4,7 +4,6 @@
 namespace App\Services;
 
 
-use App\Exceptions\TypeException;
 use App\Exceptions\UnsentMail;
 use App\Models\MailJob;
 use SendGrid;
@@ -30,8 +29,8 @@ class MailServiceSendGridImp implements MailService
     /**
      * @param \App\Models\MailJob $mailJob
      *
-     * @throws \App\Exceptions\TypeException
      * @throws \App\Exceptions\UnsentMail
+     * @throws \SendGrid\Mail\TypeException
      */
     public function send(MailJob $mailJob)
     {
@@ -47,19 +46,16 @@ class MailServiceSendGridImp implements MailService
      * @param \App\Models\MailJob $mailJob
      *
      * @return \SendGrid\Mail\Mail
-     * @throws \App\Exceptions\TypeException
+     * @throws \SendGrid\Mail\TypeException
      */
     private function prepareSendGridMail(MailJob $mailJob)
     {
         $email = new SendGridMail();
-        try {
-            $email->setFrom($mailJob->from);
-            $email->setSubject($mailJob->subject);
-            $email->addTo($mailJob->to);
-            $email->addContent("text/html", $mailJob->content);
-        } catch (SendGrid\Mail\TypeException $e) {
-            throw new TypeException($e->getMessage(), $e->getCode(), $e->getPrevious());
-        }
+        $email->setFrom($mailJob->from);
+        $email->setSubject($mailJob->subject);
+        $email->addTo($mailJob->to);
+        $email->addContent("text/html", $mailJob->content);
+
 
         return $email;
     }
