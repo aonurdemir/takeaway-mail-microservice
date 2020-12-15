@@ -4,7 +4,9 @@
 namespace App\Services;
 
 
+use App\Exceptions\UnsentMail;
 use App\Models\MailJob;
+use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
 use Mailjet\Resources;
 
@@ -33,14 +35,16 @@ class MailServiceMailjetImp implements MailService
     /**
      * @param \App\Models\MailJob $mailJob
      *
+     * @throws \App\Exceptions\UnsentMail
      */
     public function send(MailJob $mailJob)
     {
         $body = $this->prepareMailjetMailBody($mailJob);
         $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
 
-        var_dump($response->success());
-        var_dump($response->getData());
+        if (! $response->success()) {
+            throw new UnsentMail();
+        }
     }
 
     /**

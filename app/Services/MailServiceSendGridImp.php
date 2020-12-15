@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Exceptions\TypeException;
+use App\Exceptions\UnsentMail;
 use App\Models\MailJob;
 use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
@@ -30,15 +31,16 @@ class MailServiceSendGridImp implements MailService
      * @param \App\Models\MailJob $mailJob
      *
      * @throws \App\Exceptions\TypeException
+     * @throws \App\Exceptions\UnsentMail
      */
     public function send(MailJob $mailJob)
     {
         $email = $this->prepareSendGridMail($mailJob);
 
         $response = $this->sendGrid->send($email);
-        var_dump($response->statusCode());
-        var_dump($response->headers());
-        var_dump($response->body());
+        if ($response->statusCode() >= 300) {
+            throw new UnsentMail();
+        }
     }
 
     /**
