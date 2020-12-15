@@ -1,6 +1,6 @@
 version: '3'
 services:
-
+#todo https://docs.docker.com/compose/production/
   #PHP Service
   app:
     build:
@@ -12,6 +12,25 @@ services:
     tty: true
     environment:
       SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Worker Service
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile_Worker
+    image: aonurdemir/php7.4-laravel-workers
+    container_name: worker
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: worker
       SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
@@ -51,6 +70,16 @@ services:
     volumes:
       - dbdata:/var/lib/mysql/
       - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+  #Redis Service
+  #todo add volume for data persistence
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    restart: unless-stopped
+    tty: true
     networks:
       - app-network
 
