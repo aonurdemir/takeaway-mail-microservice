@@ -34,7 +34,7 @@ class MailSender
     public function send()
     {
         $this->setMailServiceFromQueue();
-        while ($this->isMailServiceAvailable()) {
+        while ($this->isMailServiceSet()) {
             try {
                 $this->doSend();
                 $this->markMailJobAsSent();
@@ -60,7 +60,7 @@ class MailSender
         $this->mailService->send($this->mailJob);
     }
 
-    private function isMailServiceAvailable(): bool
+    private function isMailServiceSet(): bool
     {
         return $this->mailService != null;
     }
