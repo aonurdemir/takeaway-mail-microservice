@@ -15,5 +15,5 @@ interface MailService
      */
     public function send(MailJob $mailJob);
 
-    public function getThirdPartyProviderName();
+    public function getThirdPartyProviderName(): string;
 }
