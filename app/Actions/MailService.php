@@ -8,7 +8,7 @@ use App\Jobs\SendMailJob;
 use App\Repositories\MailJobRepository;
 use Illuminate\Support\Facades\Validator;
 
-class MailJobService
+class MailService
 {
     private MailJobRepository $mailJobRepository;
 
