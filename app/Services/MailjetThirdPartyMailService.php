@@ -11,7 +11,7 @@ use Mailjet\Client;
 use Mailjet\Resources;
 use Mailjet\Response;
 
-class ThirdPartyMailServiceMailjetImp implements ThirdPartyMailService
+class MailjetThirdPartyMailService implements ThirdPartyMailService
 {
     /**
      * @var \Mailjet\Client

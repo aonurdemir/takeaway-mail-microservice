@@ -27,9 +27,9 @@ class ThirdPartyMailServiceFactory
     {
         switch ($service) {
             case static::SENDGRID:
-                return ThirdPartyMailServiceSendGridImp::create();
+                return SendGridThirdPartyMailService::create();
             case static::MAILJET:
-                return ThirdPartyMailServiceMailjetImp::ofVersion('v3.1');
+                return MailjetThirdPartyMailService::ofVersion('v3.1');
             default:
                 throw new UndefinedMailService($service);
         }
