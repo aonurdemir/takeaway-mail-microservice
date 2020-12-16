@@ -11,7 +11,7 @@ use Mailjet\Client;
 use Mailjet\Resources;
 use Mailjet\Response;
 
-class MailServiceMailjetImp implements MailService
+class ThirdPartyMailServiceMailjetImp implements ThirdPartyMailService
 {
     /**
      * @var \Mailjet\Client
@@ -49,7 +49,7 @@ class MailServiceMailjetImp implements MailService
         }
     }
 
-    public function getThirdPartyProviderName(): string
+    public function getName(): string
     {
         return 'mailjet';
     }

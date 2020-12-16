@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\Mail;
 
-interface MailService
+interface ThirdPartyMailService
 {
     /**
      * @param \App\Models\Mail $mail
@@ -15,5 +15,5 @@ interface MailService
      */
     public function send(Mail $mail);
 
-    public function getThirdPartyProviderName(): string;
+    public function getName(): string;
 }

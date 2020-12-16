@@ -11,7 +11,7 @@ use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
 use SendGrid\Response;
 
-class MailServiceSendGridImp implements MailService
+class ThirdPartyMailServiceSendGridImp implements ThirdPartyMailService
 {
     /**
      * @var SendGrid
@@ -71,7 +71,7 @@ class MailServiceSendGridImp implements MailService
         return $email;
     }
 
-    public function getThirdPartyProviderName(): string
+    public function getName(): string
     {
         return 'sendgrid';
     }
