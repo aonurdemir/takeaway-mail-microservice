@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Actions\MailJobService;
-use App\Jobs\SendMailJob;
 use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
-
     /**
      * @var \App\Actions\MailJobService
      */
@@ -24,7 +22,6 @@ class MailController extends Controller
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\MissingAttribute
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
