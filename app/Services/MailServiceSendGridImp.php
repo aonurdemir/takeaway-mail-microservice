@@ -5,7 +5,7 @@ namespace App\Services;
 
 
 use App\Exceptions\MailNotSent;
-use App\Models\MailJob;
+use App\Models\Mail;
 use Illuminate\Support\Facades\Log;
 use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
@@ -29,14 +29,14 @@ class MailServiceSendGridImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mailJob
+     * @param \App\Models\Mail $mail
      *
      * @throws \App\Exceptions\MailNotSent
      * @throws \SendGrid\Mail\TypeException
      */
-    public function send(MailJob $mailJob)
+    public function send(Mail $mail)
     {
-        $email = $this->prepareSendGridMail($mailJob);
+        $email = $this->prepareSendGridMail($mail);
 
         $response = $this->sendGrid->send($email);
         if ($response->statusCode() >= 300) {
@@ -52,19 +52,20 @@ class MailServiceSendGridImp implements MailService
             ['context' => $response->body()]
         );
     }
+
     /**
-     * @param \App\Models\MailJob $mailJob
+     * @param \App\Models\Mail $mail
      *
      * @return \SendGrid\Mail\Mail
      * @throws \SendGrid\Mail\TypeException
      */
-    private function prepareSendGridMail(MailJob $mailJob)
+    private function prepareSendGridMail(Mail $mail)
     {
         $email = new SendGridMail();
-        $email->setFrom($mailJob->from);
-        $email->setSubject($mailJob->subject);
-        $email->addTo($mailJob->to);
-        $email->addContent("text/html", $mailJob->content);
+        $email->setFrom($mail->from);
+        $email->setSubject($mail->subject);
+        $email->addTo($mail->to);
+        $email->addContent("text/html", $mail->content);
 
 
         return $email;

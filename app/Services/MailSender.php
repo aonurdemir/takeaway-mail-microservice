@@ -6,13 +6,13 @@ namespace App\Services;
 
 use App\Exceptions\MailNotSent;
 use App\Exceptions\NoAvailableThirdPartyMailService;
-use App\Models\MailJob;
+use App\Models\Mail;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class MailSender
 {
-    private MailJob      $mailJob;
+    private Mail         $mail;
     private ?MailService $mailService;
     private array        $mailServiceQueue;
     private bool         $isMailSent;
@@ -20,13 +20,13 @@ class MailSender
     /**
      * MailSender constructor.
      *
-     * @param \App\Models\MailJob $mailJob
+     * @param \App\Models\Mail $mail
      *
      * @throws \App\Exceptions\UndefinedMailService
      */
-    public function __construct(MailJob $mailJob)
+    public function __construct(Mail $mail)
     {
-        $this->mailJob = $mailJob;
+        $this->mail = $mail;
         $this->mailServiceQueue = MailServiceFactory::createAllServices();
         $this->isMailSent = false;
     }
@@ -62,11 +62,9 @@ class MailSender
     {
         try {
             $this->sendAndSetMailAndMailJobAsSent();
-        }
-        catch (MailNotSent $e){
+        } catch (MailNotSent $e) {
             $this->setMailServiceByPollingFromQueue();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
             $this->setMailServiceByPollingFromQueue();
         }
@@ -74,8 +72,8 @@ class MailSender
 
     private function setMailJobAsFailed(): void
     {
-        $this->mailJob->setAsFailed();
-        $this->mailJob->save();
+        $this->mail->setAsFailed();
+        $this->mail->save();
     }
 
     private function isMailServiceSet(): bool
@@ -88,16 +86,16 @@ class MailSender
      */
     private function sendAndSetMailAndMailJobAsSent(): void
     {
-        $this->mailService->send($this->mailJob);
+        $this->mailService->send($this->mail);
         $this->setMailJobAsSent();
         $this->setMailAsSent();
     }
 
     private function setMailJobAsSent(): void
     {
-        $this->mailJob->setSenderThirdPartyProviderName($this->mailService->getThirdPartyProviderName());
-        $this->mailJob->setAsSent();
-        $this->mailJob->save();
+        $this->mail->setSenderThirdPartyProviderName($this->mailService->getThirdPartyProviderName());
+        $this->mail->setAsSent();
+        $this->mail->save();
     }
 
     private function setMailAsSent(): void

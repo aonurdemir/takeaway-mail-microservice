@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Models\MailJob;
+use App\Models\Mail;
 
 interface MailJobRepository
 {
-    public function create($attributes): MailJob;
+    public function create($attributes): Mail;
 }

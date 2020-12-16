@@ -4,16 +4,16 @@
 namespace App\Services;
 
 
-use App\Models\MailJob;
+use App\Models\Mail;
 
 interface MailService
 {
     /**
-     * @param \App\Models\MailJob $mailJob
+     * @param \App\Models\Mail $mail
      *
      * @throws \App\Exceptions\MailNotSent
      */
-    public function send(MailJob $mailJob);
+    public function send(Mail $mail);
 
     public function getThirdPartyProviderName(): string;
 }

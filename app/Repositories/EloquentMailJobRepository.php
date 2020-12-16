@@ -2,20 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Models\MailJob;
+use App\Models\Mail;
 
 class EloquentMailJobRepository implements MailJobRepository
 {
-    public function create($attributes): MailJob
+    public function create($attributes): Mail
     {
         $attributes = $this->addCreatedStateToAttributes($attributes);
 
-        return MailJob::create($attributes);
+        return Mail::create($attributes);
     }
 
     private function addCreatedStateToAttributes($attributes)
     {
-        $attributes['state'] = MailJob::STATE_CREATED;
+        $attributes['state'] = Mail::STATE_CREATED;
 
         return $attributes;
     }

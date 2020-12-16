@@ -20,7 +20,7 @@ class MailJobService
     /**
      * @param $attributes
      *
-     * @return \App\Models\MailJob
+     * @return \App\Models\Mail
      * @throws \Illuminate\Validation\ValidationException
      */
     public function create($attributes)
