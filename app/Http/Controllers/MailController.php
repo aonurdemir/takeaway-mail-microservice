@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\MailService;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
     /**
-     * @var \App\Actions\MailService
+     * @var \App\Services\MailService
      */
     private MailService $mailService;
 

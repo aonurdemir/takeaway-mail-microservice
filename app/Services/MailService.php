@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Actions;
+namespace App\Services;
 
 
 use App\Jobs\SendMailJob;
