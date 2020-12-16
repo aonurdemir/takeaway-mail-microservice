@@ -6,8 +6,10 @@ namespace App\Services;
 
 use App\Exceptions\MailNotSent;
 use App\Models\MailJob;
+use Illuminate\Support\Facades\Log;
 use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
+use SendGrid\Response;
 
 class MailServiceSendGridImp implements MailService
 {
@@ -38,10 +40,18 @@ class MailServiceSendGridImp implements MailService
 
         $response = $this->sendGrid->send($email);
         if ($response->statusCode() >= 300) {
+            $this->logErrorOfUnsuccessfulResponse($response);
             throw new MailNotSent();
         }
     }
 
+    private function logErrorOfUnsuccessfulResponse(Response $response)
+    {
+        Log::error(
+            'Unsuccessful response from Sendgrid mail service provider',
+            ['context' => $response->body()]
+        );
+    }
     /**
      * @param \App\Models\MailJob $mailJob
      *
