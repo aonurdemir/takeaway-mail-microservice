@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Mail;
 
-class EloquentMailJobRepository implements MailJobRepository
+class EloquentMailRepository implements MailRepository
 {
     public function create($attributes): Mail
     {

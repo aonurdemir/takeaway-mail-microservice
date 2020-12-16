@@ -5,16 +5,16 @@ namespace App\Services;
 
 
 use App\Jobs\SendMailJob;
-use App\Repositories\MailJobRepository;
+use App\Repositories\MailRepository;
 use Illuminate\Support\Facades\Validator;
 
 class MailService
 {
-    private MailJobRepository $mailJobRepository;
+    private MailRepository $mailRepository;
 
-    public function __construct(MailJobRepository $mailJobRepository)
+    public function __construct(MailRepository $mailRepository)
     {
-        $this->mailJobRepository = $mailJobRepository;
+        $this->mailRepository = $mailRepository;
     }
 
     /**
@@ -38,7 +38,7 @@ class MailService
             $validationRules
         )->validate();
 
-        $mailJob = $this->mailJobRepository->create($attributes);
+        $mailJob = $this->mailRepository->create($attributes);
         SendMailJob::dispatchAfterResponse($mailJob);
 
         return $mailJob;

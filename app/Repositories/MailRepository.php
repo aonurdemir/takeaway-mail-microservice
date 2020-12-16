@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Mail;
 
-interface MailJobRepository
+interface MailRepository
 {
     public function create($attributes): Mail;
 }
