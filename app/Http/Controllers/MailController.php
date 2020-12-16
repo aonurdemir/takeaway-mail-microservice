@@ -2,32 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\MailJobService;
 use App\Jobs\SendMailJob;
-use App\Models\MailJob;
 use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
+
     /**
-     * Create a mail job
+     * @var \App\Actions\MailJobService
+     */
+    private MailJobService $mailJobService;
+
+    public function __construct(MailJobService $mailJobService)
+    {
+        $this->mailJobService = $mailJobService;
+    }
+
+    /**
      *
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\MissingAttribute
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
-        $mailJob = new MailJob(
+        $requestPayload = $request->only(
             [
-                'from'    => $request->input('from'),
-                'to'      => $request->input('to'),
-                'subject' => $request->input('subject'),
-                'content' => $request->input('content'),
-                'state'   => MailJob::STATE_CREATED,
+                'from',
+                'to',
+                'subject',
+                'content',
             ]
         );
-        $mailJob->save();
-        SendMailJob::dispatch($mailJob);
+
+        $this->mailJobService->create($requestPayload);
 
         return response()->json(['message' => 'ok'], 202);
     }
