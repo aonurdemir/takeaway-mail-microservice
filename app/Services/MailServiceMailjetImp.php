@@ -9,6 +9,7 @@ use App\Models\MailJob;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
 use Mailjet\Resources;
+use Mailjet\Response;
 
 class MailServiceMailjetImp implements MailService
 {
@@ -16,11 +17,6 @@ class MailServiceMailjetImp implements MailService
      * @var \Mailjet\Client
      */
     private Client $mailjetClient;
-
-    public static function ofVersion(string $version)
-    {
-        return new static($version);
-    }
 
     private function __construct($version)
     {
@@ -30,6 +26,11 @@ class MailServiceMailjetImp implements MailService
             true,
             ['version' => $version]
         );
+    }
+
+    public static function ofVersion(string $version)
+    {
+        return new static($version);
     }
 
     /**
@@ -43,9 +44,22 @@ class MailServiceMailjetImp implements MailService
         $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
 
         if (! $response->success()) {
-            Log::error($response->getBody());
+            $this->logErrorOfUnsuccessfulResponse($response);
             throw new MailNotSent();
         }
+    }
+
+    public function getThirdPartyProviderName(): string
+    {
+        return 'mailjet';
+    }
+
+    private function logErrorOfUnsuccessfulResponse(Response $response)
+    {
+        Log::error(
+            'Unsuccessful response from Mailjet mail service provider',
+            ['context' => $response->getReasonPhrase()]
+        );
     }
 
     /**
@@ -74,10 +88,5 @@ class MailServiceMailjetImp implements MailService
                 ],
             ],
         ];
-    }
-
-    public function getThirdPartyProviderName(): string
-    {
-        return 'mailjet';
     }
 }
