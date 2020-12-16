@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Exceptions\MailNotSent;
 use App\Exceptions\NoAvailableThirdPartyMailService;
 use App\Models\MailJob;
 use Exception;
@@ -61,7 +62,11 @@ class MailSender
     {
         try {
             $this->sendAndSetMailAndMailJobAsSent();
-        } catch (Exception $e) {
+        }
+        catch (MailNotSent $e){
+            $this->setMailServiceByPollingFromQueue();
+        }
+        catch (Exception $e) {
             Log::error($e->getMessage());
             $this->setMailServiceByPollingFromQueue();
         }
