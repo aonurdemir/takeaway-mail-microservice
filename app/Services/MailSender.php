@@ -43,9 +43,9 @@ class MailSender
 
         if (! $this->isMailSent()) {
             $this->setMailJobAsFailed();
-        }
 
-        throw new NoAvailableThirdPartyMailService();
+            throw new NoAvailableThirdPartyMailService();
+        }
     }
 
     private function setMailServiceByPollingFromQueue(): void
