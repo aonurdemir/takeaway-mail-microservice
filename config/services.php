@@ -13,6 +13,14 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'sendgrid' => [
+        'api_key' => env('SENDGRID_API_KEY'),
+    ],
+
+    'mailjet' => [
+        'key'    => env('MAILJET_KEY'),
+        'secret' => env('MAILJET_SECRET'),
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

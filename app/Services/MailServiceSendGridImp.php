@@ -23,7 +23,7 @@ class MailServiceSendGridImp implements MailService
 
     private function __construct()
     {
-        $this->sendGrid = new SendGrid(config('mail.mailers.sendgrid.api_key'));
+        $this->sendGrid = new SendGrid(config('services.sendgrid.api_key'));
     }
 
     /**

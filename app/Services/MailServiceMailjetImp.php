@@ -25,8 +25,8 @@ class MailServiceMailjetImp implements MailService
     private function __construct($version)
     {
         $this->mailjetClient = $mj = new Client(
-            config('mail.mailers.mailjet.key'),
-            config('mail.mailers.mailjet.secret'),
+            config('services.mailjet.key'),
+            config('services.mailjet.secret'),
             true,
             ['version' => $version]
         );
