@@ -17,7 +17,7 @@ class Mail extends Model
 {
     use HasFactory;
 
-    protected $table = 'mail_jobs';
+    protected $table = 'mails';
 
     public const STATE_CREATED    = 'created';
     public const STATE_PROCESSING = 'processing';
