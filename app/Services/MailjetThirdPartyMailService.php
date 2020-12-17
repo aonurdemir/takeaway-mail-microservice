@@ -5,13 +5,13 @@ namespace App\Services;
 
 
 use App\Exceptions\MailNotSent;
-use App\Models\MailJob;
+use App\Models\Mail;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
 use Mailjet\Resources;
 use Mailjet\Response;
 
-class MailServiceMailjetImp implements MailService
+class MailjetThirdPartyMailService implements ThirdPartyMailService
 {
     /**
      * @var \Mailjet\Client
@@ -34,13 +34,13 @@ class MailServiceMailjetImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mailJob
+     * @param \App\Models\Mail $mail
      *
      * @throws \App\Exceptions\MailNotSent
      */
-    public function send(MailJob $mailJob)
+    public function send(Mail $mail)
     {
-        $body = $this->prepareMailjetMailBody($mailJob);
+        $body = $this->prepareMailjetMailBody($mail);
         $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
 
         if (! $response->success()) {
@@ -49,7 +49,7 @@ class MailServiceMailjetImp implements MailService
         }
     }
 
-    public function getThirdPartyProviderName(): string
+    public function getName(): string
     {
         return 'mailjet';
     }
@@ -63,28 +63,28 @@ class MailServiceMailjetImp implements MailService
     }
 
     /**
-     * @param \App\Models\MailJob $mailJob
+     * @param \App\Models\Mail $mail
      *
      * @return array
      */
-    private function prepareMailjetMailBody(MailJob $mailJob)
+    private function prepareMailjetMailBody(Mail $mail)
     {
         return [
             'Messages' => [
                 [
                     'From'     => [
-                        'Email' => $mailJob->from,
+                        'Email' => $mail->from,
                         'Name'  => "Abdullah Onur",
                     ],
                     'To'       => [
                         [
-                            'Email' => $mailJob->to,
+                            'Email' => $mail->to,
                             'Name'  => "Abdullah Onur",
                         ],
                     ],
-                    'Subject'  => $mailJob->subject,
+                    'Subject'  => $mail->subject,
                     //'TextPart' => "My first Mailjet email",
-                    'HTMLPart' => $mailJob->content,
+                    'HTMLPart' => $mail->content,
                 ],
             ],
         ];

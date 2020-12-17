@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string state
  * @property string sender_third_party_provider_name
  */
-class MailJob extends Model
+class Mail extends Model
 {
     use HasFactory;
 
@@ -49,7 +49,7 @@ class MailJob extends Model
 
     public function setAsSent()
     {
-        $this->state = MailJob::STATE_SENT;
+        $this->state = Mail::STATE_SENT;
     }
 
     public function setSenderThirdPartyProviderName($name)
@@ -59,7 +59,7 @@ class MailJob extends Model
 
     public function setAsFailed()
     {
-        $this->state = MailJob::STATE_FAILED;
+        $this->state = Mail::STATE_FAILED;
     }
 
 }

@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\MailJobService;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
     /**
-     * @var \App\Actions\MailJobService
+     * @var \App\Services\MailService
      */
-    private MailJobService $mailJobService;
+    private MailService $mailService;
 
-    public function __construct(MailJobService $mailJobService)
+    public function __construct(MailService $mailService)
     {
-        $this->mailJobService = $mailJobService;
+        $this->mailService = $mailService;
     }
 
     /**
@@ -35,7 +35,7 @@ class MailController extends Controller
             ]
         );
 
-        $this->mailJobService->create($requestPayload);
+        $this->mailService->create($requestPayload);
 
         return response()->json(['message' => 'ok'], 202);
     }

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Exceptions\NoAvailableThirdPartyMailService;
-use App\Models\MailJob;
+use App\Models\Mail;
 use App\Services\MailSender;
 use App\Services\MailSenderFactory;
 use Illuminate\Bus\Queueable;
@@ -20,13 +20,13 @@ class SendMailJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private MailJob           $mailJob;
+    private Mail $mail;
     private MailSender        $mailSender;
     private MailSenderFactory $mailSenderFactory;
 
-    public function __construct(MailJob $mailJob)
+    public function __construct(Mail $mail)
     {
-        $this->mailJob = $mailJob;
+        $this->mail = $mail;
     }
 
     public function handle(MailSenderFactory $mailSenderFactory)
@@ -38,7 +38,7 @@ class SendMailJob implements ShouldQueue
 
     private function createMailSender()
     {
-        $this->mailSender = $this->mailSenderFactory->create($this->mailJob);
+        $this->mailSender = $this->mailSenderFactory->create($this->mail);
     }
 
     private function sendMail()

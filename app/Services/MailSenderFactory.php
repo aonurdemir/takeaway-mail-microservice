@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\MailJob;
+use App\Models\Mail;
 
 class MailSenderFactory
 {
-    public function create(MailJob $mailJob): MailSender
+    public function create(Mail $mail): MailSender
     {
-        return new MailSender($mailJob);
+        return new MailSender($mail);
     }
 }
