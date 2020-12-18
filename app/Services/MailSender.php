@@ -9,6 +9,7 @@ use App\Exceptions\NoAvailableMailProvider;
 use App\Exceptions\NoSuchProviderException;
 use App\Factories\MailProviderFactory;
 use App\Models\Mail;
+use App\Services\Utils\MailProviderIterator;
 use Illuminate\Support\Facades\Log;
 
 class MailSender

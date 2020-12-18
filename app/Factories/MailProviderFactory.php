@@ -7,8 +7,8 @@ namespace App\Factories;
 use App\Exceptions\UndefinedMailProvider;
 use App\Services\MailjetMailProvider;
 use App\Services\MailProvider;
-use App\Services\MailProviderIterator;
 use App\Services\SendGridMailProvider;
+use App\Services\Utils\MailProviderIterator;
 use Illuminate\Support\Facades\Log;
 
 class MailProviderFactory
