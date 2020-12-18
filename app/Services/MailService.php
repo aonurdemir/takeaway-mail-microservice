@@ -38,10 +38,10 @@ class MailService
             $validationRules
         )->validate();
 
-        $mailJob = $this->mailRepository->create($attributes);
-        SendMailJob::dispatch($mailJob);
+        $mail = $this->mailRepository->create($attributes);
+        SendMailJob::dispatch($mail);
 
-        return $mailJob;
+        return $mail;
     }
 
 }
