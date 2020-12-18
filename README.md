@@ -22,8 +22,12 @@ To send an email use below command<br>
       provide enough time for bug fix for failing jobs.
 
 - To further control mails' delivery status, third party callbacks can be leveraged
-- To reduce high traffic coming to email services, a new batch endpoint can be exposed to provide
-  clients to send batch emails.
-  
+- To reduce high traffic coming to email services, a new batch endpoint can be exposed to provide clients to send batch
+  emails.
+
+- I choose to implement “consumer self-service” in the same repo for simplicity and because of time restriction. The
+  better way could be creating a new laravel application with seperate repository. Additionally, circuit breaker
+  implementation could be transformed into a composer package and used for the two seperate services.
+
 
 - Rate limiter
