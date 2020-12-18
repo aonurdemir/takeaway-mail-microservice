@@ -9,14 +9,15 @@
     "license": "MIT",
     "require": {
         "php": "^7.4",
+        "ext-redis": "*",
+        "ackintosh/ganesha": "^1.2",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "mailjet/mailjet-apiv3-php": "^1.5",
-        "sendgrid/sendgrid": "^7.9",
-        "ext-redis": "*"
+        "sendgrid/sendgrid": "^7.9"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
