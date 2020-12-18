@@ -39,7 +39,7 @@ class MailService
         )->validate();
 
         $mailJob = $this->mailRepository->create($attributes);
-        SendMailJob::dispatchAfterResponse($mailJob);
+        SendMailJob::dispatch($mailJob);
 
         return $mailJob;
     }
