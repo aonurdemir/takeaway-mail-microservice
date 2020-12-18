@@ -6,8 +6,10 @@ namespace App\Factories;
 
 use App\Exceptions\UndefinedMailProvider;
 use App\Services\MailjetMailProvider;
-use App\Services\SendGridMailProvider;
 use App\Services\MailProvider;
+use App\Services\MailProviderIterator;
+use App\Services\SendGridMailProvider;
+use Illuminate\Support\Facades\Log;
 
 class MailProviderFactory
 {
@@ -38,19 +40,23 @@ class MailProviderFactory
         }
     }
 
-
-    /**
-     * @return array
-     * @throws \App\Exceptions\UndefinedMailProvider
-     */
-    public static function createAllProviders(): array
+    private static function createAllProviders(): array
     {
         $providers = [];
         foreach (self::PROVIDER_NAMES as $providerName) {
-            array_push($providers, static::create($providerName));
+            try {
+                array_push($providers, static::create($providerName));
+            } catch (UndefinedMailProvider $e) {
+                Log::warning($e->getMessage());
+            }
         }
 
         return $providers;
+    }
+
+    public static function getIterator()
+    {
+        return new MailProviderIterator(static::createAllProviders());
     }
 
 }
