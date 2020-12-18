@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\MailController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,11 +15,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get(
-    '/user',
-    function (Request $request) {
-        return $request->user();
-    }
-);
-
 Route::post('/v1/mails', [MailController::class, 'store']);
+Route::post('/v1/users', [UserController::class, 'store']);
