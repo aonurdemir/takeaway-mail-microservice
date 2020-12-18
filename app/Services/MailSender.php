@@ -16,7 +16,7 @@ class MailSender
     private Mail          $mail;
     private ?MailProvider $mailProvider;
     private array         $mailProvidersQueue;
-    private bool                   $isMailSent;
+    private bool          $isMailSent;
 
     /**
      * MailSender constructor.
