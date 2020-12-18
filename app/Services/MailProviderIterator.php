@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Exceptions\NoSuchElementException;
+use App\Exceptions\NoSuchProviderException;
 
 class MailProviderIterator
 {
@@ -26,12 +26,12 @@ class MailProviderIterator
 
     /**
      * @return \App\Services\MailProvider
-     * @throws \App\Exceptions\NoSuchElementException
+     * @throws \App\Exceptions\NoSuchProviderException
      */
     public function next()
     {
         if (! $this->hasNext()) {
-            throw new NoSuchElementException();
+            throw new NoSuchProviderException();
         }
 
         $provider = $this->getCurrentProvider();

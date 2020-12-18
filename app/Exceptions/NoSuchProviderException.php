@@ -4,6 +4,6 @@ namespace App\Exceptions;
 
 use Exception;
 
-class NoSuchElementException extends Exception
+class NoSuchProviderException extends Exception
 {
 }
