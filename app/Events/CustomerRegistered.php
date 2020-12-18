@@ -9,11 +9,15 @@ use Illuminate\Queue\SerializesModels;
 
 class CustomerRegistered
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function __construct()
+    private string $email;
+
+    public function __construct(string $email)
     {
-        //
+        $this->email = $email;
     }
 
     /**
@@ -24,5 +28,13 @@ class CustomerRegistered
     public function broadcastOn()
     {
         return new PrivateChannel('channel-name');
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
     }
 }
