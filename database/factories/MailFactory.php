@@ -24,8 +24,9 @@ class MailFactory extends Factory
         return [
             'to'      => $this->faker->email,
             'from'    => $this->faker->email,
-            'subject' => $this->faker->title,
+            'subject' => $this->faker->text(30),
             'content' => $this->faker->text(250),
+            'state'   => 'created',
         ];
     }
 
@@ -46,7 +47,7 @@ class MailFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 return [
-                    'state' => Mail::STATE_CREATED,
+                    'state' => 'created',
                 ];
             }
         );
