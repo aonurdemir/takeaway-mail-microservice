@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Exceptions\MailNotSent;
 use App\Exceptions\NoAvailableThirdPartyMailService;
+use App\Factories\ThirdPartyMailServiceFactory;
 use App\Models\Mail;
 use Exception;
 use Illuminate\Support\Facades\Log;

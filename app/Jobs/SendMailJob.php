@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\Exceptions\NoAvailableThirdPartyMailService;
+use App\Factories\MailSenderFactory;
 use App\Models\Mail;
 use App\Services\MailSender;
-use App\Services\MailSenderFactory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

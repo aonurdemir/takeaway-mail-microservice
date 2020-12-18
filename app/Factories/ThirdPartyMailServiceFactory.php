@@ -1,10 +1,13 @@
 <?php
 
 
-namespace App\Services;
+namespace App\Factories;
 
 
 use App\Exceptions\UndefinedMailService;
+use App\Services\MailjetThirdPartyMailService;
+use App\Services\SendGridThirdPartyMailService;
+use App\Services\ThirdPartyMailService;
 
 class ThirdPartyMailServiceFactory
 {
