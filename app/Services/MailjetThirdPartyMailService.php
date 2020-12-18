@@ -20,7 +20,7 @@ class MailjetThirdPartyMailService implements ThirdPartyMailService
 
     private function __construct($version)
     {
-        $this->mailjetClient = $mj = new Client(
+        $this->mailjetClient = new Client(
             config('services.mailjet.key'),
             config('services.mailjet.secret'),
             true,
