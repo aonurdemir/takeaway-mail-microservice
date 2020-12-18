@@ -1,7 +1,9 @@
 # REST API
+
 You can find the full api specification in api-spec.yml file.
 
 # CLI API
+
 To send an email use below command<br>
 ```php artisan mail:send <from-address> <to-address> --subject=<subject> --content=<content>```
 
@@ -10,8 +12,8 @@ To send an email use below command<br>
     <subject> should be string. Can be null.
     <content> should be string. Can be null. 
 
-
 # Decisions
+
 - I used mysql since using eloquent is much easier with laravel.
 - Since this is a small service, I preferred not to create repository and service layers.
 - I choose to postpone a mailjob for 5 seconds when no service can send the mail

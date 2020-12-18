@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\Mail;
 
-interface ThirdPartyMailService
+interface MailProvider
 {
     /**
      * @param \App\Models\Mail $mail

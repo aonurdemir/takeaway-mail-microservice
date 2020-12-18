@@ -11,7 +11,7 @@ use SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
 use SendGrid\Response;
 
-class SendGridThirdPartyMailService implements ThirdPartyMailService
+class SendGridMailProvider implements MailProvider
 {
     /**
      * @var SendGrid

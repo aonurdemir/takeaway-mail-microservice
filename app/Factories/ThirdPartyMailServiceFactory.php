@@ -5,9 +5,9 @@ namespace App\Factories;
 
 
 use App\Exceptions\UndefinedMailService;
-use App\Services\MailjetThirdPartyMailService;
-use App\Services\SendGridThirdPartyMailService;
-use App\Services\ThirdPartyMailService;
+use App\Services\MailjetMailProvider;
+use App\Services\SendGridMailProvider;
+use App\Services\MailProvider;
 
 class ThirdPartyMailServiceFactory
 {
@@ -23,16 +23,16 @@ class ThirdPartyMailServiceFactory
     /**
      * @param string $service
      *
-     * @return \App\Services\ThirdPartyMailService
+     * @return \App\Services\MailProvider
      * @throws \App\Exceptions\UndefinedMailService
      */
-    public static function create(string $service): ThirdPartyMailService
+    public static function create(string $service): MailProvider
     {
         switch ($service) {
             case static::SENDGRID:
-                return SendGridThirdPartyMailService::create();
+                return SendGridMailProvider::create();
             case static::MAILJET:
-                return MailjetThirdPartyMailService::ofVersion('v3.1');
+                return MailjetMailProvider::ofVersion('v3.1');
             default:
                 throw new UndefinedMailService($service);
         }

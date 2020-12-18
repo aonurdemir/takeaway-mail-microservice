@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Log;
 
 class MailSender
 {
-    private Mail                   $mail;
-    private ?ThirdPartyMailService $thirdPartyMailService;
-    private array                  $thirdPartyMailServiceQueue;
+    private Mail          $mail;
+    private ?MailProvider $thirdPartyMailService;
+    private array         $thirdPartyMailServiceQueue;
     private bool                   $isMailSent;
 
     /**
