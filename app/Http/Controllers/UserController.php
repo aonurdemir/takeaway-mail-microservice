@@ -10,15 +10,17 @@ class UserController extends Controller
 {
     public function store(Request $request)
     {
+        //Assume a user service is validating input, creating the new user and dispatches CustomerRegistered event
+
+        $request->validate(['email' => 'required|email']);
         $attributes = $request->only(
             [
                 'email',
             ]
         );
 
-        //Assume a user service is creating the new user and dispatches CustomerRegistered event
-        CustomerRegistered::dispatch();
+        CustomerRegistered::dispatch($attributes['email']);
 
-        return response()->json(['message' => 'created'], 201);
+        return response()->json(['message' => 'User Created'], 201);
     }
 }
