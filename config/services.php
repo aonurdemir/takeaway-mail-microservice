@@ -22,6 +22,10 @@ return [
         'secret' => env('MAILJET_SECRET'),
     ],
 
+    'inhouse_mail_service' => [
+        'url' =>  env('INHOUSE_MAIL_SERVICE_URL'),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
