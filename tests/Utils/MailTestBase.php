@@ -38,4 +38,13 @@ class MailTestBase extends TestCase
         );
     }
 
+    public function assertMailsEqual(Mail $expected, Mail $actual)
+    {
+        $this->assertEquals($expected->to, $actual->to);
+        $this->assertEquals($expected->from, $actual->from);
+        $this->assertEquals($expected->subject, $actual->subject);
+        $this->assertEquals($expected->content, $actual->content);
+        $this->assertEquals($expected->state, $actual->state);
+    }
+
 }
