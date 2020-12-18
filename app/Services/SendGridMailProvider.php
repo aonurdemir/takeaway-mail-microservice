@@ -4,7 +4,7 @@
 namespace App\Services;
 
 
-use App\Exceptions\MailNotSent;
+use App\Exceptions\MailProviderRequestException;
 use App\Models\Mail;
 use Illuminate\Support\Facades\Log;
 use SendGrid;
@@ -31,7 +31,7 @@ class SendGridMailProvider implements MailProvider
     /**
      * @param \App\Models\Mail $mail
      *
-     * @throws \App\Exceptions\MailNotSent
+     * @throws \App\Exceptions\MailProviderRequestException
      * @throws \SendGrid\Mail\TypeException
      */
     public function send(Mail $mail)
@@ -41,7 +41,7 @@ class SendGridMailProvider implements MailProvider
         $response = $this->sendGrid->send($email);
         if ($response->statusCode() >= 300) {
             $this->logErrorOfUnsuccessfulResponse($response);
-            throw new MailNotSent();
+            throw new MailProviderRequestException($this->getName(), $response->statusCode());
         }
     }
 

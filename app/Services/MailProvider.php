@@ -11,7 +11,7 @@ interface MailProvider
     /**
      * @param \App\Models\Mail $mail
      *
-     * @throws \App\Exceptions\MailNotSent
+     * @throws \App\Exceptions\MailProviderRequestException
      */
     public function send(Mail $mail);
 

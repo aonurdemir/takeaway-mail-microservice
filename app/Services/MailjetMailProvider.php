@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Exceptions\MailNotSent;
+use App\Exceptions\MailProviderRequestException;
 use App\Models\Mail;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
@@ -36,7 +37,7 @@ class MailjetMailProvider implements MailProvider
     /**
      * @param \App\Models\Mail $mail
      *
-     * @throws \App\Exceptions\MailNotSent
+     * @throws \App\Exceptions\MailProviderRequestException
      */
     public function send(Mail $mail)
     {
@@ -45,7 +46,7 @@ class MailjetMailProvider implements MailProvider
 
         if (! $response->success()) {
             $this->logErrorOfUnsuccessfulResponse($response);
-            throw new MailNotSent();
+            throw new MailProviderRequestException($this->getName(), $response->getStatus());
         }
     }
 

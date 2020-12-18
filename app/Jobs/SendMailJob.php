@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\NoAvailableThirdPartyMailService;
+use App\Exceptions\NoAvailableMailProvider;
 use App\Factories\MailSenderFactory;
 use App\Models\Mail;
 use App\Services\MailSender;
@@ -45,7 +45,7 @@ class SendMailJob implements ShouldQueue
     {
         try {
             $this->mailSender->send();
-        } catch (NoAvailableThirdPartyMailService $e) {
+        } catch (NoAvailableMailProvider $e) {
             Log::error($e->getMessage());
         } catch (\Exception $e) {
             Log::alert($e->getMessage());

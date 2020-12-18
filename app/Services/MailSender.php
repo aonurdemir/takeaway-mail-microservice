@@ -4,9 +4,9 @@
 namespace App\Services;
 
 
-use App\Exceptions\MailNotSent;
-use App\Exceptions\NoAvailableThirdPartyMailService;
-use App\Factories\ThirdPartyMailServiceFactory;
+use App\Exceptions\MailProviderRequestException;
+use App\Exceptions\NoAvailableMailProvider;
+use App\Factories\MailProviderFactory;
 use App\Models\Mail;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Log;
 class MailSender
 {
     private Mail          $mail;
-    private ?MailProvider $thirdPartyMailService;
-    private array         $thirdPartyMailServiceQueue;
+    private ?MailProvider $mailProvider;
+    private array         $mailProvidersQueue;
     private bool                   $isMailSent;
 
     /**
@@ -23,51 +23,46 @@ class MailSender
      *
      * @param \App\Models\Mail $mail
      *
-     * @throws \App\Exceptions\UndefinedMailService
+     * @throws \App\Exceptions\UndefinedMailProvider
      */
     public function __construct(Mail $mail)
     {
         $this->mail = $mail;
-        $this->thirdPartyMailServiceQueue = ThirdPartyMailServiceFactory::createAllServices();
+        $this->mailProvidersQueue = MailProviderFactory::createAllProviders();
         $this->isMailSent = false;
     }
 
     /**
-     * @throws \App\Exceptions\NoAvailableThirdPartyMailService
+     * @throws \App\Exceptions\NoAvailableMailProvider
      */
     public function send(): void
     {
-        $this->setMailServiceByPollingFromQueue();
-        while ($this->mailServiceAvailableAndMailNotSent()) {
+        $this->setMailProviderByPollingFromQueue();
+        while ($this->isMailProviderSet() && ! $this->isMailSent()) {
             $this->trySendingMail();
         }
 
         if (! $this->isMailSent()) {
             $this->setMailJobAsFailed();
 
-            throw new NoAvailableThirdPartyMailService();
+            throw new NoAvailableMailProvider();
         }
     }
 
-    private function setMailServiceByPollingFromQueue(): void
+    private function setMailProviderByPollingFromQueue(): void
     {
-        $this->thirdPartyMailService = array_shift($this->thirdPartyMailServiceQueue);
-    }
-
-    private function mailServiceAvailableAndMailNotSent(): bool
-    {
-        return $this->isMailServiceSet() && ! $this->isMailSent();
+        $this->mailProvider = array_shift($this->mailProvidersQueue);
     }
 
     private function trySendingMail(): void
     {
         try {
             $this->sendAndSetMailAndMailJobAsSent();
-        } catch (MailNotSent $e) {
-            $this->setMailServiceByPollingFromQueue();
+        } catch (MailProviderRequestException $e) {
+            $this->setMailProviderByPollingFromQueue();
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            $this->setMailServiceByPollingFromQueue();
+            $this->setMailProviderByPollingFromQueue();
         }
     }
 
@@ -77,24 +72,24 @@ class MailSender
         $this->mail->save();
     }
 
-    private function isMailServiceSet(): bool
+    private function isMailProviderSet(): bool
     {
-        return $this->thirdPartyMailService != null;
+        return $this->mailProvider != null;
     }
 
     /**
-     * @throws \App\Exceptions\MailNotSent
+     * @throws \App\Exceptions\MailProviderRequestException
      */
     private function sendAndSetMailAndMailJobAsSent(): void
     {
-        $this->thirdPartyMailService->send($this->mail);
+        $this->mailProvider->send($this->mail);
         $this->setMailJobAsSent();
         $this->setMailAsSent();
     }
 
     private function setMailJobAsSent(): void
     {
-        $this->mail->setSenderThirdPartyProviderName($this->thirdPartyMailService->getName());
+        $this->mail->setSenderThirdPartyProviderName($this->mailProvider->getName());
         $this->mail->setAsSent();
         $this->mail->save();
     }
