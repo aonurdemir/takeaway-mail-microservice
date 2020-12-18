@@ -20,13 +20,25 @@ class SendMailJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private Mail $mail;
+    public $tries = 10;
+
+    private Mail              $mail;
     private MailSender        $mailSender;
     private MailSenderFactory $mailSenderFactory;
 
     public function __construct(Mail $mail)
     {
         $this->mail = $mail;
+    }
+
+
+    public function backoff()
+    {
+        $backoffSeconds = pow(2, $this->attempts());
+
+        Log::info("Job backed off by ". $backoffSeconds);
+
+        return $backoffSeconds;
     }
 
     public function handle(MailSenderFactory $mailSenderFactory)
