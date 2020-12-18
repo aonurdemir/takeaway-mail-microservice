@@ -22,7 +22,33 @@ class MailFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'to'      => $this->faker->email,
+            'from'    => $this->faker->email,
+            'subject' => $this->faker->title,
+            'content' => $this->faker->text(250),
         ];
+    }
+
+    public function onlyRequired()
+    {
+        return $this->state(
+            function (array $attributes) {
+                return [
+                    'subject' => null,
+                    'content' => null,
+                ];
+            }
+        );
+    }
+
+    public function created()
+    {
+        return $this->state(
+            function (array $attributes) {
+                return [
+                    'state' => Mail::STATE_CREATED,
+                ];
+            }
+        );
     }
 }
