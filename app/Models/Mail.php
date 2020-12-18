@@ -52,6 +52,11 @@ class Mail extends Model
         $this->state = Mail::STATE_SENT;
     }
 
+    public function isSent()
+    {
+        return $this->state === Mail::STATE_SENT;
+    }
+
     public function setSenderThirdPartyProviderName($name)
     {
         $this->sender_third_party_provider_name = $name;
