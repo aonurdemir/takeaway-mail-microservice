@@ -31,21 +31,16 @@ class SendMailJob implements ShouldQueue
         $this->mail = $mail;
     }
 
-
     public function backoff()
     {
-        $backoffSeconds = pow(2, $this->attempts());
-
-        Log::info("Job backed off by ". $backoffSeconds);
-
-        return $backoffSeconds;
+        return pow(2, $this->attempts());
     }
 
     public function handle(MailSenderFactory $mailSenderFactory)
     {
         $this->mailSenderFactory = $mailSenderFactory;
         $this->createMailSender();
-        $this->sendMail();
+        $this->trySendingOrRelease();
     }
 
     private function createMailSender()
@@ -53,14 +48,14 @@ class SendMailJob implements ShouldQueue
         $this->mailSender = $this->mailSenderFactory->create($this->mail);
     }
 
-    private function sendMail()
+    private function trySendingOrRelease()
     {
         try {
             $this->mailSender->send();
         } catch (NoAvailableMailProvider $e) {
             Log::error($e->getMessage());
-        } catch (\Exception $e) {
-            Log::alert($e->getMessage());
+            Log::info("Job released with backoff ".$this->backoff());
+            $this->release($this->backoff());
         }
     }
 }

@@ -6,30 +6,27 @@ namespace App\Services;
 
 use App\Exceptions\MailProviderRequestException;
 use App\Exceptions\NoAvailableMailProvider;
+use App\Exceptions\NoSuchProviderException;
 use App\Factories\MailProviderFactory;
 use App\Models\Mail;
-use Exception;
 use Illuminate\Support\Facades\Log;
 
 class MailSender
 {
-    private Mail          $mail;
-    private ?MailProvider $mailProvider;
-    private array         $mailProvidersQueue;
-    private bool          $isMailSent;
+    private Mail                 $mail;
+    private ?MailProvider        $mailProvider;
+    private MailProviderIterator $mailProviderIterator;
 
     /**
      * MailSender constructor.
      *
      * @param \App\Models\Mail $mail
      *
-     * @throws \App\Exceptions\UndefinedMailProvider
      */
     public function __construct(Mail $mail)
     {
         $this->mail = $mail;
-        $this->mailProvidersQueue = MailProviderFactory::createAllProviders();
-        $this->isMailSent = false;
+        $this->mailProviderIterator = MailProviderFactory::getIterator();
     }
 
     /**
@@ -37,70 +34,50 @@ class MailSender
      */
     public function send(): void
     {
-        $this->setMailProviderByPollingFromQueue();
-        while ($this->isMailProviderSet() && ! $this->isMailSent()) {
-            $this->trySendingMail();
-        }
-
-        if (! $this->isMailSent()) {
-            $this->setMailJobAsFailed();
-
-            throw new NoAvailableMailProvider();
-        }
-    }
-
-    private function setMailProviderByPollingFromQueue(): void
-    {
-        $this->mailProvider = array_shift($this->mailProvidersQueue);
-    }
-
-    private function trySendingMail(): void
-    {
         try {
-            $this->sendAndSetMailAndMailJobAsSent();
-        } catch (MailProviderRequestException $e) {
-            $this->setMailProviderByPollingFromQueue();
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            $this->setMailProviderByPollingFromQueue();
+            $this->tryAllProvidersUntilSent();
+        } catch (NoSuchProviderException $e) {
+            Log::info("All mail providers failed to send the mail: ".$this->mail->id);
+            $this->fail();
         }
-    }
-
-    private function setMailJobAsFailed(): void
-    {
-        $this->mail->setAsFailed();
-        $this->mail->save();
-    }
-
-    private function isMailProviderSet(): bool
-    {
-        return $this->mailProvider != null;
     }
 
     /**
-     * @throws \App\Exceptions\MailProviderRequestException
+     * @throws \App\Exceptions\NoAvailableMailProvider
      */
-    private function sendAndSetMailAndMailJobAsSent(): void
+    private function fail()
     {
-        $this->mailProvider->send($this->mail);
-        $this->setMailJobAsSent();
-        $this->setMailAsSent();
+        $this->mail->setAsFailed();
+        $this->mail->save();
+
+        throw new NoAvailableMailProvider();
     }
 
-    private function setMailJobAsSent(): void
+    /**
+     * @throws \App\Exceptions\NoSuchProviderException
+     */
+    private function tryAllProvidersUntilSent()
     {
-        $this->mail->setSenderThirdPartyProviderName($this->mailProvider->getName());
-        $this->mail->setAsSent();
-        $this->mail->save();
+        while (! $this->mail->isSent()) {
+            $this->mailProvider = $this->mailProviderIterator->next();
+            $this->trySendingMail();
+        }
+    }
+
+    private function trySendingMail()
+    {
+        try {
+            $this->mailProvider->send($this->mail);
+            $this->setMailAsSent();
+        } catch (MailProviderRequestException $e) {
+            Log::error($e->getMessage());
+        }
     }
 
     private function setMailAsSent(): void
     {
-        $this->isMailSent = true;
-    }
-
-    private function isMailSent(): bool
-    {
-        return $this->isMailSent;
+        $this->mail->setSenderThirdPartyProviderName($this->mailProvider->getName());
+        $this->mail->setAsSent();
+        $this->mail->save();
     }
 }

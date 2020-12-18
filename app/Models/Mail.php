@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string content
  * @property string state
  * @property string sender_third_party_provider_name
+ * @property int    id
  */
 class Mail extends Model
 {
