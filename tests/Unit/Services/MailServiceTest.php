@@ -37,7 +37,7 @@ class MailServiceTest extends MailTestBase
         ];
 
         /** @var MailRepository $mock */
-        $mock = $this->mockMailRepositoryReceiveCreateReturnMail($attributes, $mockMail);
+        $mock = $this->mockMailRepositoryReceiveCreateWithAttributesReturnMail($attributes, $mockMail);
 
         $service = new MailService($mock);
         $createdMail = $service->create($attributes);
@@ -59,7 +59,7 @@ class MailServiceTest extends MailTestBase
         ];
 
         /** @var MailRepository $mock */
-        $mock = $this->mockMailRepositoryReceiveCreateReturnMail($attributes, $mockMail);
+        $mock = $this->mockMailRepositoryReceiveCreateWithAttributesReturnMail($attributes, $mockMail);
 
         $service = new MailService($mock);
         $createdMail = $service->create($attributes);
@@ -88,10 +88,27 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
-    public function test_wrong_to_argument()
+    public function test_non_email_to()
     {
         $attributes = $attributes = [
             'to'   => 'some-non-email',
+            'from' => 'from@mail.com',
+        ];
+
+        /** @var MailRepository $mock */
+        $mock = $mock = $this->mockMailRepositoryDontReceiveCreate();
+
+        $service = new MailService($mock);
+        $this->expectException(ValidationException::class);
+        $service->create($attributes);
+
+        Bus::assertNotDispatched(SendMailJob::class);
+    }
+
+    public function test_non_email_from()
+    {
+        $attributes = $attributes = [
+            'to'   => 'to@mail.com',
             'from' => 'some-non-email',
         ];
 
@@ -123,6 +140,42 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
+    public function test_non_string_subject()
+    {
+        $attributes = $attributes = [
+            'to'      => 'to@mail.com',
+            'from'    => 'from@mail.com',
+            'subject' => 11,
+        ];
+
+        /** @var MailRepository $mock */
+        $mock = $mock = $this->mockMailRepositoryDontReceiveCreate();
+
+        $service = new MailService($mock);
+        $this->expectException(ValidationException::class);
+        $service->create($attributes);
+
+        Bus::assertNotDispatched(SendMailJob::class);
+    }
+
+    public function test_non_string_content()
+    {
+        $attributes = $attributes = [
+            'to'      => 'to@mail.com',
+            'from'    => 'from@mail.com',
+            'content' => 11,
+        ];
+
+        /** @var MailRepository $mock */
+        $mock = $mock = $this->mockMailRepositoryDontReceiveCreate();
+
+        $service = new MailService($mock);
+        $this->expectException(ValidationException::class);
+        $service->create($attributes);
+
+        Bus::assertNotDispatched(SendMailJob::class);
+    }
+
     private function createStringWithLength(int $length)
     {
         $string = "";
@@ -133,7 +186,7 @@ class MailServiceTest extends MailTestBase
         return $string;
     }
 
-    private function mockMailRepositoryReceiveCreateReturnMail($receiveArgs, $returnMail)
+    private function mockMailRepositoryReceiveCreateWithAttributesReturnMail($receiveArgs, $returnMail)
     {
         return $this->mock(
             MailRepository::class,
