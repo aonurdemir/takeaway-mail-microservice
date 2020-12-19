@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Exceptions\NoAvailableMailProvider;
-use App\Factories\MailSenderFactory;
 use App\Models\Mail;
 use App\Services\MailSender;
 use Illuminate\Bus\Queueable;
@@ -24,7 +23,6 @@ class SendMailJob implements ShouldQueue
 
     private Mail              $mail;
     private MailSender        $mailSender;
-    private MailSenderFactory $mailSenderFactory;
 
     public function __construct(Mail $mail)
     {
@@ -36,16 +34,11 @@ class SendMailJob implements ShouldQueue
         return pow(2, $this->attempts());
     }
 
-    public function handle(MailSenderFactory $mailSenderFactory)
+    public function handle(MailSender $mailSender)
     {
-        $this->mailSenderFactory = $mailSenderFactory;
-        $this->createMailSender();
+        $this->mailSender = $mailSender;
+        $this->mailSender->setMail($this->mail);
         $this->trySendingOrRelease();
-    }
-
-    private function createMailSender()
-    {
-        $this->mailSender = $this->mailSenderFactory->create($this->mail);
     }
 
     private function trySendingOrRelease()
