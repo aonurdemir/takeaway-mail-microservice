@@ -4,7 +4,8 @@
 namespace App\Services;
 
 
-use App\Exceptions\MailProviderRequestException;
+use App\Exceptions\MailProviderConnectionException;
+use App\Exceptions\MailProviderResponseException;
 use App\Models\Mail;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
@@ -23,16 +24,21 @@ class MailjetMailProvider implements MailProvider
     /**
      * @param \App\Models\Mail $mail
      *
-     * @throws \App\Exceptions\MailProviderRequestException
+     * @throws \App\Exceptions\MailProviderConnectionException
+     * @throws \App\Exceptions\MailProviderResponseException
      */
     public function send(Mail $mail)
     {
-        $body = $this->prepareMailjetMailBody($mail);
-        $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
+        try {
+            $body = $this->prepareMailjetMailBody($mail);
+            $response = $this->mailjetClient->post(Resources::$Email, ['body' => $body]);
+        } catch (\Exception $e) {
+            throw new MailProviderConnectionException($e);
+        }
 
         if (! $response->success()) {
             $this->logErrorOfUnsuccessfulResponse($response);
-            throw new MailProviderRequestException($this->getName(), $response->getStatus());
+            throw new MailProviderResponseException($this->getName(), $response->getStatus());
         }
     }
 
