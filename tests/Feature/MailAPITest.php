@@ -3,7 +3,8 @@
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery\MockInterface;
-use SendGrid\Client;
+use SendGrid as SendGridAPI;
+use SendGrid\Response as SendGridResponse;
 use Tests\Utils\Helper;
 use Tests\Utils\MailTestBase;
 
@@ -23,11 +24,11 @@ class MailAPITest extends MailTestBase
 
     public function test_api_send_grid_active()
     {
-        $sendGridResponse = $this->mockSendGridClientResponseWithCode(200);
-        $sendGridClient = $this->mockSendGridClientWithResponse($sendGridResponse);
+        $sendGridResponse = $this->mockSendGridAPIResponseWithCode(200);
+        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
         $this->instance(
-            Client::class,
-            $sendGridClient
+            SendGridAPI::class,
+            $sendGridAPI
         );
 
         $payload = [
@@ -50,11 +51,11 @@ class MailAPITest extends MailTestBase
         $this->assertEquals(202, $response->getStatusCode());
     }
 
-    private function mockSendGridClientResponseWithCode(int $code)
+    private function mockSendGridAPIResponseWithCode(int $code)
     {
-        /** @var \SendGrid\Response $mock */
+        /** @var SendGridResponse $mock */
         $mock = $this->mock(
-            \SendGrid\Response::class,
+            SendGridResponse::class,
             function (MockInterface $mock) use ($code) {
                 $mock->shouldReceive('statusCode')->once()
                      ->andReturn($code);
@@ -64,11 +65,11 @@ class MailAPITest extends MailTestBase
         return $mock;
     }
 
-    private function mockSendGridClientWithResponse(\SendGrid\Response $response)
+    private function mockSendGridAPIWithResponse(SendGridResponse $response)
     {
-        /** @var \SendGrid $mock */
+        /** @var SendGridAPI $mock */
         $mock = $this->mock(
-            SendGrid::class,
+            SendGridAPI::class,
             function (MockInterface $mock) use ($response) {
                 $mock->shouldReceive('send')->once()
                      ->andReturn($response);
