@@ -85,7 +85,6 @@ class MailProviderIteratorTest extends TestCase
 
     /**
      * @throws \App\Exceptions\NoSuchProviderException
-     * @throws \App\Exceptions\UndefinedMailProvider
      */
     public function test_2_next_of_iterator_with_two_provider()
     {
