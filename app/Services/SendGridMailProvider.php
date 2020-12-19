@@ -13,19 +13,11 @@ use SendGrid\Response;
 
 class SendGridMailProvider implements MailProvider
 {
-    /**
-     * @var SendGrid
-     */
     private SendGrid $sendGrid;
 
-    public static function create()
+    public function __construct(SendGrid $sendGrid)
     {
-        return new static();
-    }
-
-    private function __construct()
-    {
-        $this->sendGrid = new SendGrid(config('services.sendgrid.api_key'));
+        $this->sendGrid = $sendGrid;
     }
 
     /**

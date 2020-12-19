@@ -4,7 +4,6 @@
 namespace App\Services;
 
 
-use App\Exceptions\MailNotSent;
 use App\Exceptions\MailProviderRequestException;
 use App\Models\Mail;
 use Illuminate\Support\Facades\Log;
@@ -14,24 +13,11 @@ use Mailjet\Response;
 
 class MailjetMailProvider implements MailProvider
 {
-    /**
-     * @var \Mailjet\Client
-     */
     private Client $mailjetClient;
 
-    private function __construct($version)
+    public function __construct(Client $mailjetClient)
     {
-        $this->mailjetClient = new Client(
-            config('services.mailjet.key'),
-            config('services.mailjet.secret'),
-            true,
-            ['version' => $version]
-        );
-    }
-
-    public static function ofVersion(string $version)
-    {
-        return new static($version);
+        $this->mailjetClient = $mailjetClient;
     }
 
     /**
