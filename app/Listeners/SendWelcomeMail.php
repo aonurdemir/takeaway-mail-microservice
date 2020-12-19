@@ -58,9 +58,9 @@ class SendWelcomeMail implements ShouldQueue
     {
         $this->circuitBreaker = Builder::withRateStrategy()
                                        ->adapter(new Redis($this->redisClient))
-                                       ->failureRateThreshold(1)
+                                       ->failureRateThreshold(50)
                                        ->intervalToHalfOpen(10)
-                                       ->minimumRequests(1)
+                                       ->minimumRequests(10)
                                        ->timeWindow(30)
                                        ->build();
     }
