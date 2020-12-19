@@ -2,6 +2,8 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Mailjet\Client as MailjetAPI;
+use Mailjet\Response as MailjetResponse;
 use Mockery\MockInterface;
 use SendGrid as SendGridAPI;
 use SendGrid\Response as SendGridResponse;
@@ -81,9 +83,9 @@ class MailAPITest extends MailTestBase
 
     private function mockMailjetClientResponseWithCode(int $code)
     {
-        /** @var \Mailjet\Response $mock */
+        /** @var MailjetResponse $mock */
         $mock = $this->mock(
-            \Mailjet\Response::class,
+            MailjetResponse::class,
             function (MockInterface $mock) use ($code) {
                 $mock->shouldReceive('success')
                      ->andReturn($code < 300);
@@ -95,11 +97,11 @@ class MailAPITest extends MailTestBase
         return $mock;
     }
 
-    private function mockMailjetClientWithResponse(\Mailjet\Response $response)
+    private function mockMailjetClientWithResponse(MailjetResponse $response)
     {
-        /** @var \Mailjet\Client $mock */
+        /** @var MailjetAPI $mock */
         $mock = $this->mock(
-            \Mailjet\Client::class,
+            MailjetAPI::class,
             function (MockInterface $mock) use ($response) {
                 $mock->shouldReceive('post')->once()
                      ->andReturn($response);
