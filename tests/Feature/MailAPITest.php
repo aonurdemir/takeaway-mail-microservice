@@ -31,10 +31,7 @@ class MailAPITest extends MailTestBase
 
         $this->instance(SendGridAPI::class, $sendGridAPI);
 
-        $payload = [
-            'to'   => $this->faker->email,
-            'from' => $this->faker->email,
-        ];
+        $payload = $this->getRequiredPayload();
         $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'sent', 'sendgrid');
 
         $response = $this->postJson('/api/v1/mails', $payload);
@@ -54,10 +51,7 @@ class MailAPITest extends MailTestBase
         $this->instance(SendGridAPI::class, $sendGridAPI);
         $this->instance(MailjetAPI::class, $mailjetAPI);
 
-        $payload = [
-            'to'   => $this->faker->email,
-            'from' => $this->faker->email,
-        ];
+        $payload = $this->getRequiredPayload();
         $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'sent', 'mailjet');
 
         $response = $this->postJson('/api/v1/mails', $payload);
@@ -77,16 +71,40 @@ class MailAPITest extends MailTestBase
         $this->instance(SendGridAPI::class, $sendGridAPI);
         $this->instance(MailjetAPI::class, $mailjetAPI);
 
-        $payload = [
-            'to'   => $this->faker->email,
-            'from' => $this->faker->email,
-        ];
+        $payload = $this->getRequiredPayload();
         $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'failed', null);
 
         $response = $this->postJson('/api/v1/mails', $payload);
 
         $this->assertDatabaseHasHelper($expectedAttributes);
         $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    public function test_api_send_grid_returns_error_mailjet_throws_exception()
+    {
+        $sendGridResponse = $this->mockSendGridAPIErrorResponse();
+        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+
+        $mailjetAPI = $this->mockMailjetAPIThrowsException();
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
+        $this->instance(MailjetAPI::class, $mailjetAPI);
+
+        $payload = $this->getRequiredPayload();
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'failed', null);
+
+        $response = $this->postJson('/api/v1/mails', $payload);
+
+        $this->assertDatabaseHasHelper($expectedAttributes);
+        $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    private function getRequiredPayload()
+    {
+        return [
+            'to'   => $this->faker->email,
+            'from' => $this->faker->email,
+        ];
     }
 
     private function mergePayloadWithExpectedAttributes($payload, $state, $senderThirdPartyName)
@@ -146,6 +164,20 @@ class MailAPITest extends MailTestBase
         return $mock;
     }
 
+    private function mockSendGridAPIThrowsException()
+    {
+        /** @var SendGridAPI $mock */
+        $mock = $this->mock(
+            SendGridAPI::class,
+            function (MockInterface $mock) {
+                $mock->shouldReceive('send')->once()
+                     ->andThrow(Exception::class);
+            }
+        );
+
+        return $mock;
+    }
+
     private function mockMailjetAPIErrorResponse()
     {
         /** @var MailjetResponse $mock */
@@ -188,6 +220,20 @@ class MailAPITest extends MailTestBase
             function (MockInterface $mock) use ($response) {
                 $mock->shouldReceive('post')->once()
                      ->andReturn($response);
+            }
+        );
+
+        return $mock;
+    }
+
+    private function mockMailjetAPIThrowsException()
+    {
+        /** @var MailjetAPI $mock */
+        $mock = $this->mock(
+            MailjetAPI::class,
+            function (MockInterface $mock) {
+                $mock->shouldReceive('post')->once()
+                     ->andThrow(Exception::class);
             }
         );
 
