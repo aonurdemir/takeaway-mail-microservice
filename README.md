@@ -58,6 +58,11 @@ docker-compose exec app php artisan migrate
 
 <b>However, the best way of doing these to run all the commands in your container image (Dockerfile).</b>
 
+# Configuration
+
+You can set configuration options of Circuit Breaker in ```config/circuit_breaker.php```
+. Do not forget to run ```docker-compose exec app php artisan config:clear``` in order to use updated configs.
+
 # REST API
 
 You can find the full api specification in api-spec.yml file.
