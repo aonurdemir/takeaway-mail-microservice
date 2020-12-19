@@ -35,15 +35,7 @@ class MailAPITest extends MailTestBase
             'to'   => $this->faker->email,
             'from' => $this->faker->email,
         ];
-        $expectedAttributes = array_merge(
-            $payload,
-            [
-                'subject'                          => null,
-                'content'                          => null,
-                'state'                            => 'sent',
-                'sender_third_party_provider_name' => 'sendgrid',
-            ]
-        );
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'sent', 'sendgrid');
 
         $response = $this->postJson('/api/v1/mails', $payload);
 
@@ -66,20 +58,48 @@ class MailAPITest extends MailTestBase
             'to'   => $this->faker->email,
             'from' => $this->faker->email,
         ];
-        $expectedAttributes = array_merge(
-            $payload,
-            [
-                'subject'                          => null,
-                'content'                          => null,
-                'state'                            => 'sent',
-                'sender_third_party_provider_name' => 'mailjet',
-            ]
-        );
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'sent', 'mailjet');
 
         $response = $this->postJson('/api/v1/mails', $payload);
 
         $this->assertDatabaseHasHelper($expectedAttributes);
         $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    public function test_api_send_grid_returns_error_mailjet_returns_error()
+    {
+        $sendGridResponse = $this->mockSendGridAPIErrorResponse();
+        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+
+        $mailjetResponse = $this->mockMailjetAPIErrorResponse();
+        $mailjetAPI = $this->mockMailjetAPIWithResponse($mailjetResponse);
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
+        $this->instance(MailjetAPI::class, $mailjetAPI);
+
+        $payload = [
+            'to'   => $this->faker->email,
+            'from' => $this->faker->email,
+        ];
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'failed', null);
+
+        $response = $this->postJson('/api/v1/mails', $payload);
+
+        $this->assertDatabaseHasHelper($expectedAttributes);
+        $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    private function mergePayloadWithExpectedAttributes($payload, $state, $senderThirdPartyName)
+    {
+        return array_merge(
+            $payload,
+            [
+                'subject'                          => null,
+                'content'                          => null,
+                'state'                            => $state,
+                'sender_third_party_provider_name' => $senderThirdPartyName,
+            ]
+        );
     }
 
     private function mockSendGridAPIErrorResponse()
@@ -136,6 +156,8 @@ class MailAPITest extends MailTestBase
                      ->andReturn(false);
                 $mock->shouldReceive('getStatus')
                      ->andReturn(400);
+                $mock->shouldReceive('getReasonPhrase')
+                     ->andReturn('message body');
             }
         );
 
