@@ -137,6 +137,23 @@ class MailAPITest extends MailTestBase
         $this->assertEquals(202, $response->getStatusCode());
     }
 
+    public function test_api_send_grid_throws_exception_mailjet_throws_exception()
+    {
+        $sendGridAPI = $this->mockSendGridAPIThrowsException();
+        $mailjetAPI = $this->mockMailjetAPIThrowsException();
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
+        $this->instance(MailjetAPI::class, $mailjetAPI);
+
+        $payload = $this->getRequiredPayload();
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'failed', null);
+
+        $response = $this->postJson('/api/v1/mails', $payload);
+
+        $this->assertDatabaseHasHelper($expectedAttributes);
+        $this->assertEquals(202, $response->getStatusCode());
+    }
+
     private function getRequiredPayload()
     {
         return [
