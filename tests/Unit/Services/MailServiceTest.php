@@ -37,13 +37,7 @@ class MailServiceTest extends MailTestBase
         ];
 
         /** @var MailRepository $mock */
-        $mock = $this->mock(
-            MailRepository::class,
-            function (MockInterface $mock) use ($attributes, $mockMail) {
-                $mock->shouldReceive('create')->once()->with($attributes)
-                     ->andReturn($mockMail);
-            }
-        );
+        $mock = $this->mockMailRepositoryReceiveCreateReturnMail($attributes, $mockMail);
 
         $service = new MailService($mock);
         $createdMail = $service->create($attributes);
@@ -65,13 +59,7 @@ class MailServiceTest extends MailTestBase
         ];
 
         /** @var MailRepository $mock */
-        $mock = $this->mock(
-            MailRepository::class,
-            function (MockInterface $mock) use ($attributes, $mockMail) {
-                $mock->shouldReceive('create')->once()->with($attributes)
-                     ->andReturn($mockMail);
-            }
-        );
+        $mock = $this->mockMailRepositoryReceiveCreateReturnMail($attributes, $mockMail);
 
         $service = new MailService($mock);
         $createdMail = $service->create($attributes);
@@ -91,18 +79,78 @@ class MailServiceTest extends MailTestBase
         ];
 
         /** @var MailRepository $mock */
-        $mock = $this->mock(
+        $mock = $this->mockMailRepositoryDontReceiveCreate();
+
+        $service = new MailService($mock);
+        $this->expectException(ValidationException::class);
+        $service->create($attributes);
+
+        Bus::assertNotDispatched(SendMailJob::class);
+    }
+
+    public function test_wrong_to_argument()
+    {
+        $attributes = $attributes = [
+            'to'   => 'some-non-email',
+            'from' => 'some-non-email',
+        ];
+
+        /** @var MailRepository $mock */
+        $mock = $mock = $this->mockMailRepositoryDontReceiveCreate();
+
+        $service = new MailService($mock);
+        $this->expectException(ValidationException::class);
+        $service->create($attributes);
+
+        Bus::assertNotDispatched(SendMailJob::class);
+    }
+
+    public function test_long_subject()
+    {
+        $attributes = $attributes = [
+            'to'      => 'to@mail.com',
+            'from'    => 'from@mail.com',
+            'subject' => $this->createStringWithLength(79),
+        ];
+
+        /** @var MailRepository $mock */
+        $mock = $mock = $this->mockMailRepositoryDontReceiveCreate();
+
+        $service = new MailService($mock);
+        $this->expectException(ValidationException::class);
+        $service->create($attributes);
+
+        Bus::assertNotDispatched(SendMailJob::class);
+    }
+
+    private function createStringWithLength(int $length)
+    {
+        $string = "";
+        for ($i = 0; $i < $length; $i++) {
+            $string .= "a";
+        }
+
+        return $string;
+    }
+
+    private function mockMailRepositoryReceiveCreateReturnMail($receiveArgs, $returnMail)
+    {
+        return $this->mock(
+            MailRepository::class,
+            function (MockInterface $mock) use ($receiveArgs, $returnMail) {
+                $mock->shouldReceive('create')->once()->with($receiveArgs)
+                     ->andReturn($returnMail);
+            }
+        );
+    }
+
+    private function mockMailRepositoryDontReceiveCreate()
+    {
+        return $this->mock(
             MailRepository::class,
             function (MockInterface $mock) {
                 $mock->shouldNotReceive('create');
             }
         );
-
-        $service = new MailService($mock);
-
-        $this->expectException(ValidationException::class);
-        $service->create($attributes);
-
-        Bus::assertNotDispatched(SendMailJob::class);
     }
 }
