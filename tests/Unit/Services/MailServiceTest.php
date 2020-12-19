@@ -10,16 +10,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Validation\ValidationException;
 use Mockery\MockInterface;
+use Tests\Utils\Helper;
 use Tests\Utils\MailTestBase;
 
 class MailServiceTest extends MailTestBase
 {
     use RefreshDatabase;
 
+    private Helper $helper;
+
     public function setUp(): void
     {
         parent::setUp();
         Bus::fake();
+
+        $this->helper = new Helper();
     }
 
     /**
@@ -127,7 +132,7 @@ class MailServiceTest extends MailTestBase
         $attributes = $attributes = [
             'to'      => 'to@mail.com',
             'from'    => 'from@mail.com',
-            'subject' => $this->createStringWithLength(79),
+            'subject' => $this->helper->createStringWithLength(79),
         ];
 
         /** @var MailRepository $mock */
@@ -174,16 +179,6 @@ class MailServiceTest extends MailTestBase
         $service->create($attributes);
 
         Bus::assertNotDispatched(SendMailJob::class);
-    }
-
-    private function createStringWithLength(int $length)
-    {
-        $string = "";
-        for ($i = 0; $i < $length; $i++) {
-            $string .= "a";
-        }
-
-        return $string;
     }
 
     private function mockMailRepositoryReceiveCreateWithAttributesReturnMail($receiveArgs, $returnMail)

@@ -29,11 +29,12 @@ class MailTestBase extends TestCase
         $this->assertDatabaseHas(
             'mails',
             [
-                'to'      => $expectedAttr['to'],
-                'from'    => $expectedAttr['from'],
-                'subject' => $expectedAttr['subject'],
-                'content' => $expectedAttr['content'],
-                'state'   => $expectedAttr['state'],
+                'to'                               => $expectedAttr['to'],
+                'from'                             => $expectedAttr['from'],
+                'subject'                          => $expectedAttr['subject'],
+                'content'                          => $expectedAttr['content'],
+                'state'                            => $expectedAttr['state'],
+                'sender_third_party_provider_name' => $expectedAttr['sender_third_party_provider_name'] ?? null,
             ]
         );
     }
