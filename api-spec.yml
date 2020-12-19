@@ -1,0 +1,84 @@
+swagger: "2.0"
+info:
+  description: "This is a mail service and a customer self-service. You can send an mail at a time by the defined
+  endpoint. Also you can register users (pseudo)"
+  version: "1.0.0"
+  title: "Mail Service"
+  contact:
+    email: "aaonurdemir@gmail.com"
+host: "localhost"
+basePath: "/api/v1"
+tags:
+  - name: "mail"
+    description: "Mail endpoints"
+  - name: "user"
+    description: "Customer Self-Service"
+schemes:
+  - "http"
+paths:
+  /mails:
+    post:
+      tags:
+        - "mail"
+      summary: "Send mail asynchronously"
+      operationId: "sendMail"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Mail object to be sent with its content"
+          required: true
+          schema:
+            $ref: "#/definitions/Mail"
+      responses:
+        "202":
+          description: "Accepted"
+
+  /user/registration:
+    post:
+      tags:
+        - "user"
+      summary: "Register User"
+      operationId: "registerUser"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Request Body"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "201":
+          description: "Created"
+
+definitions:
+  Mail:
+    type: "object"
+    required:
+      - "to"
+      - "from"
+    properties:
+      to:
+        type: "string"
+        example: "recepient@gmail.com"
+      from:
+        type: "string"
+        example: "sender@gmail.com"
+      subject:
+        type: "string"
+        example: "Hello from swagger"
+      content:
+        type: "string"
+        example: "Mail content"
+        description: "Can be Text, HTML or Markdown"
+  User:
+    type: "object"
+    required:
+      - "email"
+    properties:
+      email:
+        type: "string"
+        example: "user@gmail.com"
