@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Exceptions\MailProviderRequestException;
 use App\Exceptions\NoAvailableMailProvider;
 use App\Exceptions\NoSuchProviderException;
-use App\Factories\MailProviderFactory;
 use App\Models\Mail;
 use App\Services\Utils\MailProviderIterator;
 use Illuminate\Support\Facades\Log;
@@ -21,13 +20,16 @@ class MailSender
     /**
      * MailSender constructor.
      *
-     * @param \App\Models\Mail $mail
-     *
+     * @param \App\Services\Utils\MailProviderIterator $mailProviderIterator
      */
-    public function __construct(Mail $mail)
+    public function __construct(MailProviderIterator $mailProviderIterator)
+    {
+        $this->mailProviderIterator = $mailProviderIterator;
+    }
+
+    public function setMail($mail)
     {
         $this->mail = $mail;
-        $this->mailProviderIterator = MailProviderFactory::getIterator();
     }
 
     /**
