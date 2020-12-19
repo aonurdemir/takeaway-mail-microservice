@@ -3,6 +3,7 @@
 namespace App\Services\Utils;
 
 use App\Exceptions\NoSuchProviderException;
+use App\Services\MailProvider;
 
 class MailProviderIterator
 {
@@ -18,7 +19,7 @@ class MailProviderIterator
      *
      * @param \App\Services\MailProvider[] $providers
      */
-    public function __construct(array $providers)
+    public function __construct(MailProvider ...$providers)
     {
         $this->providers = $providers;
         $this->currentIndex = 0;
