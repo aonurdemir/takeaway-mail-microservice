@@ -56,10 +56,10 @@ class AppServiceProvider extends ServiceProvider
             function ($app) {
                 return Builder::withRateStrategy()
                               ->adapter(new GaneshaRedisAdapter($app->make(Redis::class)))
-                              ->failureRateThreshold(50)
-                              ->intervalToHalfOpen(10)
-                              ->minimumRequests(10)
-                              ->timeWindow(30)
+                              ->failureRateThreshold(config('circuit_breaker.failure_rate_threshold'))
+                              ->intervalToHalfOpen(config('circuit_breaker.interval_to_half_open'))
+                              ->minimumRequests(config('circuit_breaker.minimum_requests'))
+                              ->timeWindow(config('circuit_breaker.time_window'))
                               ->build();
             }
         );
