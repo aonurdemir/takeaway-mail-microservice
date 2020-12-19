@@ -93,4 +93,6 @@ php artisan mail:send <from-address> <to-address> --subject=<subject> --content=
 
 - Retry policy is handled by jobs' backoff method
 
+- Log files can be gathered to centralized place. Some NoSQL storage or third part service can be used.
+
 
