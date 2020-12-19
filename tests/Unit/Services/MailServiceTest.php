@@ -25,7 +25,7 @@ class MailServiceTest extends MailTestBase
     /**
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function test_main_scenario()
+    public function test_create_main_scenario()
     {
         /** @var Mail $mockMail */
         $mockMail = Mail::factory()->make();
@@ -49,7 +49,7 @@ class MailServiceTest extends MailTestBase
     /**
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function test_without_optional_args()
+    public function test_create_without_optional_args()
     {
         /** @var Mail $mockMail */
         $mockMail = Mail::factory()->onlyRequired()->make();
@@ -71,7 +71,7 @@ class MailServiceTest extends MailTestBase
     /**
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function test_without_required_args()
+    public function test_create_without_required_args()
     {
         $attributes = $attributes = [
             'subject' => 'some subject',
@@ -88,7 +88,7 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
-    public function test_non_email_to()
+    public function test_create_non_email_to()
     {
         $attributes = $attributes = [
             'to'   => 'some-non-email',
@@ -105,7 +105,7 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
-    public function test_non_email_from()
+    public function test_create_non_email_from()
     {
         $attributes = $attributes = [
             'to'   => 'to@mail.com',
@@ -122,7 +122,7 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
-    public function test_long_subject()
+    public function test_create_long_subject()
     {
         $attributes = $attributes = [
             'to'      => 'to@mail.com',
@@ -140,7 +140,7 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
-    public function test_non_string_subject()
+    public function test_create_non_string_subject()
     {
         $attributes = $attributes = [
             'to'      => 'to@mail.com',
@@ -158,7 +158,7 @@ class MailServiceTest extends MailTestBase
         Bus::assertNotDispatched(SendMailJob::class);
     }
 
-    public function test_non_string_content()
+    public function test_create_non_string_content()
     {
         $attributes = $attributes = [
             'to'      => 'to@mail.com',
