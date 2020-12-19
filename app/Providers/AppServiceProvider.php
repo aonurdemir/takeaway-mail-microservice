@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Ackintosh\Ganesha;
+use Ackintosh\Ganesha\Builder;
+use Ackintosh\Ganesha\Storage\Adapter\Redis as GaneshaRedisAdapter;
 use App\Repositories\EloquentMailRepository;
 use App\Repositories\MailRepository;
 use App\Services\MailjetMailProvider;
@@ -10,6 +13,7 @@ use App\Services\SendGridMailProvider;
 use App\Services\Utils\MailProviderIterator;
 use Illuminate\Support\ServiceProvider;
 use Mailjet\Client;
+use Redis;
 use SendGrid;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +48,19 @@ class AppServiceProvider extends ServiceProvider
                     true,
                     ['version' => 'v3.1']
                 );
+            }
+        );
+
+        $this->app->singleton(
+            Ganesha::class,
+            function ($app) {
+                return Builder::withRateStrategy()
+                              ->adapter(new GaneshaRedisAdapter($app->make(Redis::class)))
+                              ->failureRateThreshold(50)
+                              ->intervalToHalfOpen(10)
+                              ->minimumRequests(10)
+                              ->timeWindow(30)
+                              ->build();
             }
         );
 
