@@ -27,7 +27,7 @@ class MailAPITest extends MailTestBase
     public function test_api_send_grid_returns_success()
     {
         $sendGridResponse = $this->mockSendGridAPISuccessResponse();
-        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+        $sendGridAPI = $this->mockSendGridAPIReturnResponse($sendGridResponse);
 
         $this->instance(SendGridAPI::class, $sendGridAPI);
 
@@ -43,10 +43,10 @@ class MailAPITest extends MailTestBase
     public function test_api_send_grid_returns_error_mailjet_returns_success()
     {
         $sendGridResponse = $this->mockSendGridAPIErrorResponse();
-        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+        $sendGridAPI = $this->mockSendGridAPIReturnResponse($sendGridResponse);
 
         $mailjetResponse = $this->mockMailjetAPISuccessResponse();
-        $mailjetAPI = $this->mockMailjetAPIWithResponse($mailjetResponse);
+        $mailjetAPI = $this->mockMailjetAPIReturnResponse($mailjetResponse);
 
         $this->instance(SendGridAPI::class, $sendGridAPI);
         $this->instance(MailjetAPI::class, $mailjetAPI);
@@ -63,10 +63,10 @@ class MailAPITest extends MailTestBase
     public function test_api_send_grid_returns_error_mailjet_returns_error()
     {
         $sendGridResponse = $this->mockSendGridAPIErrorResponse();
-        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+        $sendGridAPI = $this->mockSendGridAPIReturnResponse($sendGridResponse);
 
         $mailjetResponse = $this->mockMailjetAPIErrorResponse();
-        $mailjetAPI = $this->mockMailjetAPIWithResponse($mailjetResponse);
+        $mailjetAPI = $this->mockMailjetAPIReturnResponse($mailjetResponse);
 
         $this->instance(SendGridAPI::class, $sendGridAPI);
         $this->instance(MailjetAPI::class, $mailjetAPI);
@@ -83,9 +83,47 @@ class MailAPITest extends MailTestBase
     public function test_api_send_grid_returns_error_mailjet_throws_exception()
     {
         $sendGridResponse = $this->mockSendGridAPIErrorResponse();
-        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+        $sendGridAPI = $this->mockSendGridAPIReturnResponse($sendGridResponse);
 
         $mailjetAPI = $this->mockMailjetAPIThrowsException();
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
+        $this->instance(MailjetAPI::class, $mailjetAPI);
+
+        $payload = $this->getRequiredPayload();
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'failed', null);
+
+        $response = $this->postJson('/api/v1/mails', $payload);
+
+        $this->assertDatabaseHasHelper($expectedAttributes);
+        $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    public function test_api_send_grid_throws_exception_mailjet_returns_success()
+    {
+        $sendGridAPI = $this->mockSendGridAPIThrowsException();
+
+        $mailjetResponse = $this->mockMailjetAPISuccessResponse();
+        $mailjetAPI = $this->mockMailjetAPIReturnResponse($mailjetResponse);
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
+        $this->instance(MailjetAPI::class, $mailjetAPI);
+
+        $payload = $this->getRequiredPayload();
+        $expectedAttributes = $this->mergePayloadWithExpectedAttributes($payload, 'sent', 'mailjet');
+
+        $response = $this->postJson('/api/v1/mails', $payload);
+
+        $this->assertDatabaseHasHelper($expectedAttributes);
+        $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    public function test_api_send_grid_throws_exception_mailjet_returns_error()
+    {
+        $sendGridAPI = $this->mockSendGridAPIThrowsException();
+
+        $mailjetResponse = $this->mockMailjetAPIErrorResponse();
+        $mailjetAPI = $this->mockMailjetAPIReturnResponse($mailjetResponse);
 
         $this->instance(SendGridAPI::class, $sendGridAPI);
         $this->instance(MailjetAPI::class, $mailjetAPI);
@@ -150,7 +188,7 @@ class MailAPITest extends MailTestBase
         return $mock;
     }
 
-    private function mockSendGridAPIWithResponse(SendGridResponse $response)
+    private function mockSendGridAPIReturnResponse(SendGridResponse $response)
     {
         /** @var SendGridAPI $mock */
         $mock = $this->mock(
@@ -212,7 +250,7 @@ class MailAPITest extends MailTestBase
         return $mock;
     }
 
-    private function mockMailjetAPIWithResponse(MailjetResponse $response)
+    private function mockMailjetAPIReturnResponse(MailjetResponse $response)
     {
         /** @var MailjetAPI $mock */
         $mock = $this->mock(
