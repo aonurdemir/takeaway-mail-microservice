@@ -24,14 +24,12 @@ class MailAPITest extends MailTestBase
         $this->helper = new Helper();
     }
 
-    public function test_api_send_grid_active()
+    public function test_api_send_grid_returns_success()
     {
-        $sendGridResponse = $this->mockSendGridAPIResponseWithCode(200);
+        $sendGridResponse = $this->mockSendGridAPISuccessResponse();
         $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
-        $this->instance(
-            SendGridAPI::class,
-            $sendGridAPI
-        );
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
 
         $payload = [
             'to'   => $this->faker->email,
@@ -53,14 +51,61 @@ class MailAPITest extends MailTestBase
         $this->assertEquals(202, $response->getStatusCode());
     }
 
-    private function mockSendGridAPIResponseWithCode(int $code)
+    public function test_api_send_grid_returns_error_mailjet_returns_success()
+    {
+        $sendGridResponse = $this->mockSendGridAPIErrorResponse();
+        $sendGridAPI = $this->mockSendGridAPIWithResponse($sendGridResponse);
+
+        $mailjetResponse = $this->mockMailjetAPISuccessResponse();
+        $mailjetAPI = $this->mockMailjetAPIWithResponse($mailjetResponse);
+
+        $this->instance(SendGridAPI::class, $sendGridAPI);
+        $this->instance(MailjetAPI::class, $mailjetAPI);
+
+        $payload = [
+            'to'   => $this->faker->email,
+            'from' => $this->faker->email,
+        ];
+        $expectedAttributes = array_merge(
+            $payload,
+            [
+                'subject'                          => null,
+                'content'                          => null,
+                'state'                            => 'sent',
+                'sender_third_party_provider_name' => 'mailjet',
+            ]
+        );
+
+        $response = $this->postJson('/api/v1/mails', $payload);
+
+        $this->assertDatabaseHasHelper($expectedAttributes);
+        $this->assertEquals(202, $response->getStatusCode());
+    }
+
+    private function mockSendGridAPIErrorResponse()
     {
         /** @var SendGridResponse $mock */
         $mock = $this->mock(
             SendGridResponse::class,
-            function (MockInterface $mock) use ($code) {
+            function (MockInterface $mock) {
+                $mock->shouldReceive('statusCode')
+                     ->andReturn(400);
+                $mock->shouldReceive('body')
+                     ->andReturn('message body');
+            }
+        );
+
+        return $mock;
+    }
+
+    private function mockSendGridAPISuccessResponse()
+    {
+        /** @var SendGridResponse $mock */
+        $mock = $this->mock(
+            SendGridResponse::class,
+            function (MockInterface $mock) {
                 $mock->shouldReceive('statusCode')->once()
-                     ->andReturn($code);
+                     ->andReturn(200);
             }
         );
 
@@ -81,23 +126,39 @@ class MailAPITest extends MailTestBase
         return $mock;
     }
 
-    private function mockMailjetClientResponseWithCode(int $code)
+    private function mockMailjetAPIErrorResponse()
     {
         /** @var MailjetResponse $mock */
         $mock = $this->mock(
             MailjetResponse::class,
-            function (MockInterface $mock) use ($code) {
+            function (MockInterface $mock) {
                 $mock->shouldReceive('success')
-                     ->andReturn($code < 300);
+                     ->andReturn(false);
                 $mock->shouldReceive('getStatus')
-                     ->andReturn($code);
+                     ->andReturn(400);
             }
         );
 
         return $mock;
     }
 
-    private function mockMailjetClientWithResponse(MailjetResponse $response)
+    private function mockMailjetAPISuccessResponse()
+    {
+        /** @var MailjetResponse $mock */
+        $mock = $this->mock(
+            MailjetResponse::class,
+            function (MockInterface $mock) {
+                $mock->shouldReceive('success')
+                     ->andReturn(true);
+                $mock->shouldReceive('getStatus')
+                     ->andReturn(200);
+            }
+        );
+
+        return $mock;
+    }
+
+    private function mockMailjetAPIWithResponse(MailjetResponse $response)
     {
         /** @var MailjetAPI $mock */
         $mock = $this->mock(
